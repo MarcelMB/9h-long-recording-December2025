@@ -1,0 +1,74 @@
+{
+  "description": "WL27 Dec 10 2025 wireless miniscope recording - frame quality analysis",
+  "trimming": {
+    "long-2": "last 30s trimmed (miniscope off)",
+    "long-9": "last 155s trimmed (miniscope off)"
+  },
+  "matching": {
+    "method": "nearest unix timestamp from CSV buffer_recv_unix_time (last buffer per frame)",
+    "threshold_ms": 25,
+    "clock_sync": "<10ms at segment start, stable throughout"
+  },
+  "detection": {
+    "black_rows": "row mean < 2 (normal range 42-145)",
+    "checkerboard": "mean |even_col - odd_col| per row > 30 (normal ~3)"
+  },
+  "results_trimmed": {
+    "daq1": {
+      "broken": 34536,
+      "total": 647528,
+      "pct": 5.33
+    },
+    "daq2": {
+      "broken": 4795,
+      "total": 637458,
+      "pct": 0.75
+    },
+    "combined": {
+      "broken": 1290,
+      "total_matched": 645619,
+      "pct": 0.2,
+      "broken_seconds": 64.5
+    },
+    "rescued_frames": 35775,
+    "unmatched_daq1": 1909,
+    "recording_minutes": 538.0
+  },
+  "results_untrimmed": {
+    "daq1": {
+      "broken": 38374,
+      "total": 653201,
+      "pct": 5.87
+    },
+    "daq2": {
+      "broken": 8555,
+      "total": 643116,
+      "pct": 1.33
+    },
+    "combined": {
+      "broken": 5023,
+      "total_matched": 651277,
+      "pct": 0.77
+    }
+  },
+  "per_segment_combined_pct_trimmed": {
+    "long-2": 0.12,
+    "long-4": 0.07,
+    "long-6": 0.44,
+    "long-8": 0.63,
+    "long-9": 0.04,
+    "long-10": 0.18,
+    "long-12": 0.07,
+    "long-13": 0.01
+  },
+  "file_mapping_daq1_to_daq2": {
+    "long-2": "long",
+    "long-4": "long-2",
+    "long-6": "long-4",
+    "long-8": "long-6",
+    "long-9": "long-7",
+    "long-10": "long-8",
+    "long-12": "long-9",
+    "long-13": "long-10"
+  }
+}

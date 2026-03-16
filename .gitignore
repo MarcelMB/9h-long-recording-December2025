@@ -1,0 +1,25 @@
+# Raw recording data (multi-GB AVI files)
+*.avi
+
+# Buffer-level CSV logs (~50MB each)
+*.csv
+
+# Raw binary data files
+*.bin
+
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+
+# Claude Code local settings
+.claude/
+
+# Screenshots (not part of the pipeline)
+Screenshot*.png
+
+# Debug frame PNGs (old diagnostic exports)
+neural_DAQ1/debug_detectors/DAQ1_long6/
+neural_DAQ1/debug_detectors/DAQ2_long6/
