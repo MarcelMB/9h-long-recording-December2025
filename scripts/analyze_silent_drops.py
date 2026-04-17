@@ -166,3 +166,57 @@ def apply_trim(per_frame, daq, label):
     if trim_frames >= len(per_frame):
         return per_frame.iloc[0:0].copy(), len(per_frame)
     return per_frame.iloc[:-trim_frames].copy(), trim_frames
+
+
+def find_csv(directory, label):
+    """Find the CSV for a given chunk label (e.g., 'long-2').
+
+    Matches patterns used in analyze_drops.py. Returns the first match or None.
+    """
+    for pattern in [f"*_{label}.csv", f"*_{label}-*.csv", f"*{label}.csv"]:
+        matches = glob.glob(os.path.join(directory, pattern))
+        if matches:
+            return matches[0]
+    return None
+
+
+def analyze_file(csv_path, daq, label):
+    """Run the 4 detectors on one DAQ's CSV for one chunk.
+
+    Returns the per-file result dict (see spec Output section).
+    """
+    df = pd.read_csv(csv_path)
+    total_frames_in_csv = int(df["reconstructed_frame_index"].nunique())
+
+    per_frame = reduce_to_per_frame(df)
+    per_frame, trim_frames = apply_trim(per_frame, daq=daq, label=label)
+
+    frame_nums = per_frame["frame_num"].tolist()
+    device_ts = per_frame["timestamp"].tolist()
+    host_ts = per_frame["buffer_recv_unix_time"].tolist()
+    drop_counts = per_frame["dropped_buffer_count"].tolist()
+
+    fn_result = detect_frame_num_gaps(frame_nums)
+    dev_result = detect_timestamp_gaps(
+        device_ts, threshold=GAP_THRESHOLD_MS, period=EXPECTED_PERIOD_MS, unit_label="ms"
+    )
+    host_result = detect_timestamp_gaps(
+        host_ts, threshold=GAP_THRESHOLD_S, period=EXPECTED_PERIOD_MS / 1000.0, unit_label="s"
+    )
+    drop_result = detect_dropped_buffer_deltas(drop_counts)
+
+    return {
+        "file": os.path.basename(csv_path),
+        "daq": daq,
+        "fps": FPS,
+        "expected_period_ms": EXPECTED_PERIOD_MS,
+        "gap_threshold_ms": GAP_THRESHOLD_MS,
+        "total_frames_in_csv": total_frames_in_csv,
+        "trim_seconds": TRIM_SECONDS_DAQ1.get(label, 0) if daq == 1 else 0,
+        "trim_frames": trim_frames,
+        "analyzed_frames": len(per_frame),
+        "frame_num": fn_result,
+        "device_timestamp": dev_result,
+        "host_timestamp": host_result,
+        "dropped_buffer_count": drop_result,
+    }
