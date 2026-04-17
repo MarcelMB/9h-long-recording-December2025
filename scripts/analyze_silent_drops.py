@@ -127,3 +127,26 @@ def detect_dropped_buffer_deltas(counts):
         "nonzero_deltas": len(events),
         "events": events,
     }
+
+
+def reduce_to_per_frame(df):
+    """Collapse buffer-level rows to one row per reconstructed_frame_index.
+
+    Returns a DataFrame sorted by reconstructed_frame_index with columns:
+      - reconstructed_frame_index
+      - frame_num                (first — should be constant within group)
+      - timestamp                (min — device frame-start ms)
+      - buffer_recv_unix_time    (min — host arrival of earliest buffer)
+      - dropped_buffer_count     (max — cumulative firmware counter)
+    """
+    per_frame = (
+        df.groupby("reconstructed_frame_index", sort=True)
+        .agg(
+            frame_num=("frame_num", "first"),
+            timestamp=("timestamp", "min"),
+            buffer_recv_unix_time=("buffer_recv_unix_time", "min"),
+            dropped_buffer_count=("dropped_buffer_count", "max"),
+        )
+        .reset_index()
+    )
+    return per_frame

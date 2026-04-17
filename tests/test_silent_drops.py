@@ -11,6 +11,19 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
 import analyze_silent_drops as asd  # noqa: E402
 
+import io
+import pandas as pd
+
+
+def _synthetic_csv(rows):
+    header = (
+        "linked_list,frame_num,buffer_count,frame_buffer_count,write_buffer_count,"
+        "dropped_buffer_count,timestamp,pixel_count,write_timestamp,battery_voltage_raw,"
+        "input_voltage_raw,buffer_recv_index,buffer_recv_unix_time,black_padding_px,"
+        "reconstructed_frame_index\n"
+    )
+    return header + "\n".join(rows) + "\n"
+
 
 def test_detect_frame_num_gaps_no_gaps():
     frame_nums = [10, 11, 12, 13, 14]
@@ -100,6 +113,35 @@ def test_detect_dropped_buffer_deltas_ignores_decreases():
     assert result["events"] == [{"at_frame_idx": 3, "delta": 2}], result
 
 
+def test_reduce_to_per_frame_basic():
+    csv_text = _synthetic_csv([
+        "0,100,0,0,0,0,1000,5032,0,195,181,0,10.000,0,0",
+        "1,100,1,1,1,0,1002,5032,0,195,181,1,10.005,0,0",
+        "0,101,0,0,0,0,1050,5032,0,195,181,2,10.050,0,1",
+        "1,101,1,1,1,0,1052,5032,0,195,181,3,10.055,0,1",
+    ])
+    df = pd.read_csv(io.StringIO(csv_text))
+    per_frame = asd.reduce_to_per_frame(df)
+    assert len(per_frame) == 2, per_frame
+    assert list(per_frame["reconstructed_frame_index"]) == [0, 1]
+    assert list(per_frame["frame_num"]) == [100, 101]
+    assert list(per_frame["timestamp"]) == [1000, 1050]
+    assert list(per_frame["buffer_recv_unix_time"]) == [10.000, 10.050]
+    assert list(per_frame["dropped_buffer_count"]) == [0, 0]
+
+
+def test_reduce_to_per_frame_with_firmware_drops():
+    csv_text = _synthetic_csv([
+        "0,100,0,0,0,0,1000,5032,0,195,181,0,10.000,0,0",
+        "1,100,1,1,1,0,1002,5032,0,195,181,1,10.005,0,0",
+        "0,101,0,0,0,0,1050,5032,0,195,181,2,10.050,0,1",
+        "1,101,1,1,1,3,1052,5032,0,195,181,3,10.055,0,1",
+    ])
+    df = pd.read_csv(io.StringIO(csv_text))
+    per_frame = asd.reduce_to_per_frame(df)
+    assert list(per_frame["dropped_buffer_count"]) == [0, 3]
+
+
 if __name__ == "__main__":
     test_detect_frame_num_gaps_no_gaps()
     test_detect_frame_num_gaps_single_gap_of_2()
@@ -115,3 +157,6 @@ if __name__ == "__main__":
     test_detect_dropped_buffer_deltas_cumulative()
     test_detect_dropped_buffer_deltas_ignores_decreases()
     print("dropped_buffer_count delta tests: OK")
+    test_reduce_to_per_frame_basic()
+    test_reduce_to_per_frame_with_firmware_drops()
+    print("per-frame reduction tests: OK")
