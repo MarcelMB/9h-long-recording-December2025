@@ -296,7 +296,50 @@ def run():
         json.dump(summary, f, indent=2)
     print(f"\nSummary written to: {summary_path}")
 
+    plot_path = os.path.join(OUTPUT_DIR, "silent_drops.png")
+    plot_summary(summary, plot_path)
+    print(f"Plot written to: {plot_path}")
+
     return per_daq_results, summary
+
+
+def plot_summary(summary, out_path):
+    """Two stacked panels (DAQ1, DAQ2). Grouped bars per file, one bar per detector."""
+    detectors = [
+        ("frame_num_drops", "frame_num", "#1f77b4"),
+        ("device_ts_drops", "device ts", "#ff7f0e"),
+        ("host_ts_drops", "host ts", "#2ca02c"),
+        ("buffer_drops", "dropped_buffers", "#d62728"),
+    ]
+
+    fig, axes = plt.subplots(2, 1, figsize=(14, 8), sharex=False)
+    for ax, daq_key in zip(axes, ("DAQ1", "DAQ2")):
+        rows = summary[daq_key]["per_file"]
+        if not rows:
+            ax.set_title(f"{daq_key}: no files")
+            continue
+        labels = [r["file"].replace(".csv", "") for r in rows]
+        x = np.arange(len(labels))
+        bar_w = 0.2
+        for i, (key, pretty, color) in enumerate(detectors):
+            vals = [r[key] for r in rows]
+            ax.bar(x + (i - 1.5) * bar_w, vals, width=bar_w, color=color, label=pretty)
+        ax.set_xticks(x)
+        ax.set_xticklabels(labels, rotation=30, ha="right", fontsize=8)
+        ax.set_ylabel("silent drops (frames)")
+        totals = summary[daq_key]["totals"]
+        ax.set_title(
+            f"{daq_key} — totals: frame_num={totals['frame_num_drops']} "
+            f"device_ts={totals['device_ts_drops']} host_ts={totals['host_ts_drops']} "
+            f"buffer={totals['buffer_drops']} "
+            f"(analyzed_frames={totals['analyzed_frames']})"
+        )
+        ax.legend(loc="upper right", fontsize=8)
+        ax.grid(axis="y", alpha=0.3)
+
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=150)
+    plt.close()
 
 
 if __name__ == "__main__":
