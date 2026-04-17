@@ -48,3 +48,29 @@ PAIRS = [
 
 # DAQ1 only, end-of-file trim (matches analyze_drops.py)
 TRIM_SECONDS_DAQ1 = {"long-2": 30, "long-9": 155}
+
+
+def detect_frame_num_gaps(frame_nums):
+    """Detect gaps in the device frame_num counter.
+
+    A gap of (frame_nums[i] - frame_nums[i-1]) > 1 means (diff - 1) frames
+    were produced by the device but never reached the host.
+    """
+    events = []
+    total_missed = 0
+    for i in range(1, len(frame_nums)):
+        diff = frame_nums[i] - frame_nums[i - 1]
+        if diff > 1:
+            missed = int(diff - 1)
+            events.append({
+                "at_frame_idx": i,
+                "frame_num_before": int(frame_nums[i - 1]),
+                "frame_num_after": int(frame_nums[i]),
+                "missed": missed,
+            })
+            total_missed += missed
+    return {
+        "silent_drops": total_missed,
+        "gap_events": len(events),
+        "events": events,
+    }
