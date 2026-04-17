@@ -42,9 +42,45 @@ def test_detect_frame_num_gaps_empty():
     assert asd.detect_frame_num_gaps([42])["silent_drops"] == 0
 
 
+def test_detect_timestamp_gaps_device_ms_no_gaps():
+    ts = [0, 50, 100, 150, 200]
+    result = asd.detect_timestamp_gaps(ts, threshold=75.0, period=50.0, unit_label="ms")
+    assert result["silent_drops"] == 0, result
+    assert result["gap_events"] == 0, result
+
+
+def test_detect_timestamp_gaps_device_ms_one_gap():
+    ts = [0, 50, 100, 300, 350]  # 200 ms gap at idx 3 → round(200/50) - 1 = 3 missed
+    result = asd.detect_timestamp_gaps(ts, threshold=75.0, period=50.0, unit_label="ms")
+    assert result["silent_drops"] == 3, result
+    assert result["gap_events"] == 1, result
+    assert result["events"][0]["at_frame_idx"] == 3
+    assert abs(result["events"][0]["dt_ms"] - 200.0) < 1e-6
+    assert result["events"][0]["missed"] == 3
+
+
+def test_detect_timestamp_gaps_host_seconds():
+    ts = [1000.000, 1000.050, 1000.100, 1000.300]  # 0.2 s gap at idx 3
+    result = asd.detect_timestamp_gaps(ts, threshold=0.075, period=0.050, unit_label="s")
+    assert result["silent_drops"] == 3, result
+    assert result["gap_events"] == 1, result
+    assert abs(result["events"][0]["dt_s"] - 0.2) < 1e-6
+
+
+def test_detect_timestamp_gaps_just_under_threshold():
+    ts = [0, 50, 120, 170]  # 70 ms < 75 ms threshold
+    result = asd.detect_timestamp_gaps(ts, threshold=75.0, period=50.0, unit_label="ms")
+    assert result["silent_drops"] == 0, result
+
+
 if __name__ == "__main__":
     test_detect_frame_num_gaps_no_gaps()
     test_detect_frame_num_gaps_single_gap_of_2()
     test_detect_frame_num_gaps_multiple_gaps()
     test_detect_frame_num_gaps_empty()
     print("frame_num gap tests: OK")
+    test_detect_timestamp_gaps_device_ms_no_gaps()
+    test_detect_timestamp_gaps_device_ms_one_gap()
+    test_detect_timestamp_gaps_host_seconds()
+    test_detect_timestamp_gaps_just_under_threshold()
+    print("timestamp gap tests: OK")

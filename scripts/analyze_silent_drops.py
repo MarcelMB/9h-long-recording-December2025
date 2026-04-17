@@ -74,3 +74,35 @@ def detect_frame_num_gaps(frame_nums):
         "gap_events": len(events),
         "events": events,
     }
+
+
+def detect_timestamp_gaps(timestamps, threshold, period, unit_label):
+    """Detect timestamp gaps larger than `threshold`.
+
+    timestamps: monotonic list/array of per-frame timestamps.
+    threshold:  gap size above which we flag (same units as timestamps).
+    period:     expected inter-frame period (same units); used to estimate
+                missed frame count = round(dt / period) - 1.
+    unit_label: "ms" for device timestamp, "s" for host unix time. Controls
+                the event dict key ("dt_ms" vs "dt_s").
+    """
+    dt_key = f"dt_{unit_label}"
+    events = []
+    total_missed = 0
+    for i in range(1, len(timestamps)):
+        dt = timestamps[i] - timestamps[i - 1]
+        if dt > threshold:
+            missed = int(round(dt / period)) - 1
+            if missed < 1:
+                missed = 1
+            events.append({
+                "at_frame_idx": i,
+                dt_key: float(dt),
+                "missed": missed,
+            })
+            total_missed += missed
+    return {
+        "silent_drops": total_missed,
+        "gap_events": len(events),
+        "events": events,
+    }
