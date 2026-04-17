@@ -10,7 +10,11 @@ The existing broken-frame detectors (`scripts/analyze_frames.py`) scan each AVI 
 1. Black rows (≥30 consecutive zero pixels across ≥10 rows)
 2. Gradient noise (mean |second derivative| per row > 20)
 
-These only fire on frames that reached the AVI file. If **all 8 buffers** of a frame are lost in transmission, the frame never exists in the AVI — it is invisible to pixel-based detection. The CSV logs still record what the device produced and when each buffer arrived, so gaps in the CSV can identify these silent drops.
+These only fire on frames that reached the AVI file. If **all 8 buffers** of a frame are lost in transmission, the frame never exists in the AVI — it is invisible to pixel-based detection. The CSV logs still record when each buffer arrived at the host, so gaps in host arrival times identify these silent drops.
+
+## Revision note (2026-04-17)
+
+The original design proposed four detectors (frame_num gaps, device timestamp gaps, host timestamp gaps, dropped_buffer_count deltas). Investigation of real data showed that device-side fields (`frame_num`, `timestamp`, `dropped_buffer_count`) are corrupted by wireless-transmission bit-flips (uint32 sentinel values at ~0.01 % of rows plus within-range bit errors that are indistinguishable from real data). Only the host-written `buffer_recv_unix_time` is reliable. The final implementation therefore uses a **single detector on host arrival time**, and the 3 device-side detectors were removed.
 
 ## Scope
 
