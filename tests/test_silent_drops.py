@@ -73,6 +73,33 @@ def test_detect_timestamp_gaps_just_under_threshold():
     assert result["silent_drops"] == 0, result
 
 
+def test_detect_dropped_buffer_deltas_none():
+    counts = [0, 0, 0, 0]
+    result = asd.detect_dropped_buffer_deltas(counts)
+    assert result["total_delta"] == 0, result
+    assert result["nonzero_deltas"] == 0, result
+    assert result["events"] == [], result
+
+
+def test_detect_dropped_buffer_deltas_cumulative():
+    counts = [0, 0, 4, 4, 7]
+    result = asd.detect_dropped_buffer_deltas(counts)
+    assert result["total_delta"] == 7, result
+    assert result["nonzero_deltas"] == 2, result
+    assert result["events"] == [
+        {"at_frame_idx": 2, "delta": 4},
+        {"at_frame_idx": 4, "delta": 3},
+    ], result
+
+
+def test_detect_dropped_buffer_deltas_ignores_decreases():
+    counts = [10, 10, 3, 5]  # idx 2 decreases — skip; idx 3 delta = 5-3 = 2
+    result = asd.detect_dropped_buffer_deltas(counts)
+    assert result["total_delta"] == 2, result
+    assert result["nonzero_deltas"] == 1, result
+    assert result["events"] == [{"at_frame_idx": 3, "delta": 2}], result
+
+
 if __name__ == "__main__":
     test_detect_frame_num_gaps_no_gaps()
     test_detect_frame_num_gaps_single_gap_of_2()
@@ -84,3 +111,7 @@ if __name__ == "__main__":
     test_detect_timestamp_gaps_host_seconds()
     test_detect_timestamp_gaps_just_under_threshold()
     print("timestamp gap tests: OK")
+    test_detect_dropped_buffer_deltas_none()
+    test_detect_dropped_buffer_deltas_cumulative()
+    test_detect_dropped_buffer_deltas_ignores_decreases()
+    print("dropped_buffer_count delta tests: OK")

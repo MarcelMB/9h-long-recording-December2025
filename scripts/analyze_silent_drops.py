@@ -106,3 +106,24 @@ def detect_timestamp_gaps(timestamps, threshold, period, unit_label):
         "gap_events": len(events),
         "events": events,
     }
+
+
+def detect_dropped_buffer_deltas(counts):
+    """Sum positive deltas of the firmware-reported dropped_buffer_count.
+
+    The counter is cumulative. Decreases are treated as 0 delta (defensive —
+    should not happen within a single file since the device doesn't restart
+    mid-file, but guards against data quirks).
+    """
+    events = []
+    total = 0
+    for i in range(1, len(counts)):
+        delta = int(counts[i] - counts[i - 1])
+        if delta > 0:
+            events.append({"at_frame_idx": i, "delta": delta})
+            total += delta
+    return {
+        "total_delta": total,
+        "nonzero_deltas": len(events),
+        "events": events,
+    }
