@@ -220,3 +220,84 @@ def analyze_file(csv_path, daq, label):
         "host_timestamp": host_result,
         "dropped_buffer_count": drop_result,
     }
+
+
+def write_per_file_json(result, daq_dir):
+    """Write the per-file JSON next to the existing results/ for that DAQ."""
+    results_dir = os.path.join(daq_dir, "results")
+    os.makedirs(results_dir, exist_ok=True)
+    stem = os.path.splitext(result["file"])[0]
+    out_path = os.path.join(results_dir, f"{stem}.silent_drops.json")
+    with open(out_path, "w") as f:
+        json.dump(result, f, indent=2)
+    return out_path
+
+
+def build_summary(per_daq_results):
+    """Build the combined summary dict from per-file results grouped by DAQ."""
+    summary = {
+        "fps": FPS,
+        "gap_threshold_ms": GAP_THRESHOLD_MS,
+    }
+    for daq_key in ("DAQ1", "DAQ2"):
+        files = per_daq_results.get(daq_key, [])
+        per_file_rows = []
+        totals = {
+            "analyzed_frames": 0,
+            "frame_num_drops": 0,
+            "device_ts_drops": 0,
+            "host_ts_drops": 0,
+            "buffer_drops": 0,
+        }
+        for r in files:
+            row = {
+                "file": r["file"],
+                "analyzed_frames": r["analyzed_frames"],
+                "frame_num_drops": r["frame_num"]["silent_drops"],
+                "device_ts_drops": r["device_timestamp"]["silent_drops"],
+                "host_ts_drops": r["host_timestamp"]["silent_drops"],
+                "buffer_drops": r["dropped_buffer_count"]["total_delta"],
+            }
+            per_file_rows.append(row)
+            for k in totals:
+                totals[k] += row[k]
+        summary[daq_key] = {"per_file": per_file_rows, "totals": totals}
+    return summary
+
+
+def run():
+    per_daq_results = {"DAQ1": [], "DAQ2": []}
+
+    for daq1_label, daq2_label in PAIRS:
+        for daq, daq_dir, label in [
+            (1, DAQ1_DIR, daq1_label),
+            (2, DAQ2_DIR, daq2_label),
+        ]:
+            csv_path = find_csv(daq_dir, label)
+            if csv_path is None:
+                print(f"SKIP DAQ{daq} {label}: CSV not found")
+                continue
+            result = analyze_file(csv_path, daq=daq, label=label)
+            out_path = write_per_file_json(result, daq_dir)
+            per_daq_results[f"DAQ{daq}"].append(result)
+            print(
+                f"DAQ{daq} {label}: analyzed={result['analyzed_frames']} "
+                f"frame_num={result['frame_num']['silent_drops']} "
+                f"device_ts={result['device_timestamp']['silent_drops']} "
+                f"host_ts={result['host_timestamp']['silent_drops']} "
+                f"buffer={result['dropped_buffer_count']['total_delta']} "
+                f"-> {out_path}"
+            )
+
+    summary = build_summary(per_daq_results)
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    summary_path = os.path.join(OUTPUT_DIR, "silent_drops_summary.json")
+    with open(summary_path, "w") as f:
+        json.dump(summary, f, indent=2)
+    print(f"\nSummary written to: {summary_path}")
+
+    return per_daq_results, summary
+
+
+if __name__ == "__main__":
+    run()
