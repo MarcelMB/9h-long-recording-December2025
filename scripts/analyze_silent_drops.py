@@ -150,3 +150,19 @@ def reduce_to_per_frame(df):
         .reset_index()
     )
     return per_frame
+
+
+def apply_trim(per_frame, daq, label):
+    """Drop the last N frames from DAQ1 files in the trim table.
+
+    Returns (trimmed_df, trim_frames_dropped). DAQ2 is never trimmed.
+    """
+    if daq != 1:
+        return per_frame, 0
+    trim_s = TRIM_SECONDS_DAQ1.get(label, 0)
+    if trim_s <= 0:
+        return per_frame, 0
+    trim_frames = int(trim_s * FPS)
+    if trim_frames >= len(per_frame):
+        return per_frame.iloc[0:0].copy(), len(per_frame)
+    return per_frame.iloc[:-trim_frames].copy(), trim_frames

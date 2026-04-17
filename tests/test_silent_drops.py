@@ -142,6 +142,28 @@ def test_reduce_to_per_frame_with_firmware_drops():
     assert list(per_frame["dropped_buffer_count"]) == [0, 3]
 
 
+def test_apply_trim_daq1_matched_label():
+    per_frame = pd.DataFrame({"reconstructed_frame_index": list(range(1000))})
+    trimmed, trim_frames = asd.apply_trim(per_frame, daq=1, label="long-2")
+    assert trim_frames == 600
+    assert len(trimmed) == 400
+    assert list(trimmed["reconstructed_frame_index"]) == list(range(400))
+
+
+def test_apply_trim_daq1_no_matching_label():
+    per_frame = pd.DataFrame({"reconstructed_frame_index": list(range(100))})
+    trimmed, trim_frames = asd.apply_trim(per_frame, daq=1, label="long-4")
+    assert trim_frames == 0
+    assert len(trimmed) == 100
+
+
+def test_apply_trim_daq2_never_trims():
+    per_frame = pd.DataFrame({"reconstructed_frame_index": list(range(1000))})
+    trimmed, trim_frames = asd.apply_trim(per_frame, daq=2, label="long-2")
+    assert trim_frames == 0
+    assert len(trimmed) == 1000
+
+
 if __name__ == "__main__":
     test_detect_frame_num_gaps_no_gaps()
     test_detect_frame_num_gaps_single_gap_of_2()
@@ -160,3 +182,7 @@ if __name__ == "__main__":
     test_reduce_to_per_frame_basic()
     test_reduce_to_per_frame_with_firmware_drops()
     print("per-frame reduction tests: OK")
+    test_apply_trim_daq1_matched_label()
+    test_apply_trim_daq1_no_matching_label()
+    test_apply_trim_daq2_never_trims()
+    print("trim tests: OK")
