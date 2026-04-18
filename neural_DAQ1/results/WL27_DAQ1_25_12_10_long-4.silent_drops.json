@@ -1,0 +1,92 @@
+{
+  "file": "WL27_DAQ1_25_12_10_long-4.csv",
+  "daq": 1,
+  "fps": 20.0,
+  "expected_period_ms": 50.0,
+  "gap_threshold_ms": 75.0,
+  "total_frames_in_csv": 80639,
+  "trim_seconds": 0,
+  "trim_frames": 0,
+  "analyzed_frames": 80639,
+  "host_timestamp": {
+    "silent_drops": 15,
+    "gap_events": 15,
+    "events": [
+      {
+        "at_frame_idx": 13754,
+        "dt_s": 0.08147025108337402,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 13774,
+        "dt_s": 0.11304497718811035,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 20248,
+        "dt_s": 0.1090240478515625,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 20538,
+        "dt_s": 0.07748770713806152,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 20668,
+        "dt_s": 0.07605910301208496,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 20878,
+        "dt_s": 0.07654714584350586,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 21896,
+        "dt_s": 0.077301025390625,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 22012,
+        "dt_s": 0.07533907890319824,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 22215,
+        "dt_s": 0.0770559310913086,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 22969,
+        "dt_s": 0.08660721778869629,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 22976,
+        "dt_s": 0.07894706726074219,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 28330,
+        "dt_s": 0.07581377029418945,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 45621,
+        "dt_s": 0.07749509811401367,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 72262,
+        "dt_s": 0.07874011993408203,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 74116,
+        "dt_s": 0.07809090614318848,
+        "missed": 1
+      }
+    ]
+  }
+}
