@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 import os
 
-AVI_PATH = "/Users/mbrosch/Documents/9h_long_recording_December2025/neural_DAQ1/output/WL27_stitched_chunk_01.avi"
+AVI_PATH = "/Users/mbrosch/Documents/9h_long_recording_December2025/output/WL27_stitched_chunk_01.avi"
 
 cap = cv2.VideoCapture(AVI_PATH)
 total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))

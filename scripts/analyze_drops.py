@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 BASE_DIR = "/Users/mbrosch/Documents/9h_long_recording_December2025"
 DAQ1_DIR = os.path.join(BASE_DIR, "neural_DAQ1")
 DAQ2_DIR = os.path.join(BASE_DIR, "neural_DAQ2")
+OUTPUT_DIR = os.path.join(BASE_DIR, "output")
 
 FPS = 20.0
 
@@ -196,7 +197,7 @@ def main():
     ax3.set_title("Drop density over time (1-minute bins)")
 
     plt.tight_layout()
-    out_path = os.path.join(DAQ1_DIR, "output", "drop_analysis.png")
+    out_path = os.path.join(OUTPUT_DIR, "drop_analysis.png")
     plt.savefig(out_path, dpi=150)
     print(f"\nPlot saved to: {out_path}")
     plt.close()
@@ -209,7 +210,7 @@ def main():
         "run_lengths": run_lengths,
         "runs": [{"global_frame_idx": r[0], "length": r[1], "time_h": r[0]/FPS/3600, "duration_s": r[1]/FPS} for r in runs],
     }
-    json_path = os.path.join(DAQ1_DIR, "output", "drop_analysis.json")
+    json_path = os.path.join(OUTPUT_DIR, "drop_analysis.json")
     with open(json_path, "w") as f:
         json.dump(run_data, f, indent=2)
     print(f"Data saved to: {json_path}")

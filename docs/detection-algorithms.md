@@ -2,7 +2,7 @@
 
 ## Current Detectors (mio-style)
 
-Two artifact types are detected, both caused by wireless transmission errors in the UCLA Miniscope v4 system.
+Two artifact types are detected, both caused by wireless transmission errors in the Miniscope Zero system.
 
 ### 1. Black Row Detector
 

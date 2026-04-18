@@ -21,7 +21,7 @@ import cv2
 BASE_DIR = "/Users/mbrosch/Documents/9h_long_recording_December2025"
 DAQ1_DIR = os.path.join(BASE_DIR, "neural_DAQ1")
 DAQ2_DIR = os.path.join(BASE_DIR, "neural_DAQ2")
-OUTPUT_DIR = os.path.join(BASE_DIR, "neural_DAQ1", "output")
+OUTPUT_DIR = os.path.join(BASE_DIR, "output")
 
 FPS = 20.0
 FRAME_W = 200
@@ -217,6 +217,16 @@ def main():
     debug_d2_black_writer = make_writer(os.path.join(OUTPUT_DIR, "debug_broken_daq2_black.avi"))
     debug_d2_gradient_writer = make_writer(os.path.join(OUTPUT_DIR, "debug_broken_daq2_gradient.avi"))
 
+    # Combined timestamp CSV for the full stitched recording
+    csv_path = os.path.join(OUTPUT_DIR, "WL27_stitched_timestamps.csv")
+    csv_file = open(csv_path, "w", newline="")
+    csv_writer = csv.writer(csv_file)
+    csv_writer.writerow([
+        "stitched_frame", "chunk", "chunk_frame",
+        "unix_time", "source", "segment",
+        "daq1_frame", "daq2_frame", "daq1_broken", "daq2_broken",
+    ])
+
     # Stitched output — chunked by hour
     chunk_idx = 1
     chunk_frame_count = 0
@@ -347,6 +357,21 @@ def main():
                 stitched_writer.write(chosen)
                 seg_stitched += 1
                 chunk_frame_count += 1
+                # Determine source and timestamp for CSV
+                if d1_bad:
+                    source = "DAQ2"
+                    t = daq2_ftimes.get(d2_idx, 0.0)
+                elif d2_bad:
+                    source = "DAQ1"
+                    t = daq1_ftimes.get(d1_idx, 0.0)
+                else:
+                    source = "DAQ2"
+                    t = daq2_ftimes.get(d2_idx, 0.0)
+                csv_writer.writerow([
+                    total_stitched + seg_stitched - 1, chunk_idx, chunk_frame_count - 1,
+                    f"{t:.6f}", source, daq1_label,
+                    d1_idx, d2_idx, int(d1_bad), int(d2_bad),
+                ])
                 # Update max projection
                 if max_proj is None:
                     max_proj = chosen.astype(np.uint16)
@@ -389,6 +414,10 @@ def main():
         mp_path = os.path.join(OUTPUT_DIR, f"WL27_stitched_chunk_{chunk_idx:02d}_maxproj.png")
         cv2.imwrite(mp_path, np.clip(max_proj, 0, 255).astype(np.uint8))
         print(f"Saved max projection: {mp_path}")
+
+    # Close timestamp CSV
+    csv_file.close()
+    print(f"Saved timestamp CSV: {csv_path} ({total_stitched} rows)")
 
     # Release all writers
     stitched_writer.release()
