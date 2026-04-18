@@ -57,6 +57,44 @@ Rate = silent drops as a percentage of analyzed frames per file.
 
 DAQ2 loses roughly **30×** as many frames as DAQ1 across this recording (0.15 % vs. 0.004 %). Both are low in absolute terms, but the difference between the two DAQs is consistent across every paired chunk — it looks like a per-link property, not an episodic event.
 
+## Inter-frame jitter (host arrival time) and the 75 ms threshold
+
+Looking at the inter-frame gaps that fall *under* the 75 ms drop threshold tells us how tight the normal cadence is and whether 75 ms is a defensible cut-off.
+
+| DAQ | n gaps ≤ 75 ms | mean | std | median | p99 |
+|-----|--------------:|-----:|----:|-------:|----:|
+| DAQ1 | 649,467 | 48.68 ms | 5.69 ms | 49.20 ms | 54.82 ms |
+| DAQ2 | 562,170 | 49.26 ms | 4.76 ms | 47.80 ms | 61.36 ms |
+
+75 ms sits ~4–5 σ above the mean on both DAQs, cleanly separating normal jitter from dropped frames.
+
+### But the two DAQs have structurally different timing distributions
+
+**DAQ1 — tight unimodal peak**
+
+| gap range | % frames |
+|----------|---------:|
+| 45–50 ms | **88.2 %** |
+| 50–55 ms |   8.0 % |
+| everything else |   3.8 % |
+
+One peak at 49.2 ms. p90 = 49.8 ms (barely wider than the median). Very clean 20 Hz cadence on the host side.
+
+**DAQ2 — bimodal**
+
+| gap range | % frames |
+|----------|---------:|
+| 45–50 ms | **56.5 %** |
+| 50–55 ms | **34.3 %** |
+| 55–65 ms |   3.3 % |
+| < 45 ms  |   5.4 % |
+
+Two peaks — one at ~47.8 ms, a secondary at ~52 ms. More than a third of DAQ2 frames land in the 50–55 ms bucket vs DAQ1's 8 %. This is the reason DAQ2's p99 is ~6 ms higher: it's not a rare long tail, it's the *body* of the distribution being wider.
+
+The signature — a "too-early" gap (< 45 ms, 5.4 % of DAQ2 frames vs 1.0 % on DAQ1) immediately followed by a "too-late" gap (50–55 ms) — is characteristic of **host-side USB / OS scheduling batching**. Successive pairs of gaps sum to ~100 ms = two frames, so no data is lost, but the buffers arrive in batches rather than at a steady tempo.
+
+Since the miniscope optical cadence is essentially identical on both DAQs (medians differ by ~1 ms), the difference is in how each host's USB stack hands off buffers — likely a different USB port, hub, or capture-process priority on the DAQ2 side. This is not a silent-drop issue (all these gaps are under the 75 ms threshold), but any downstream analysis that assumes a smooth 20 Hz tempo within a single DAQ (e.g. event timing, peak-fitting) should keep this asymmetry in mind.
+
 ## Files
 
 - Script: `scripts/analyze_silent_drops.py`
