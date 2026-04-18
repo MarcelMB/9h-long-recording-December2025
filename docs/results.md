@@ -38,3 +38,19 @@ Each input AVI produces three debug AVIs:
 ## Key Observation
 
 DAQ2 has a much lower error rate (1.40%) than DAQ1 (5.96%). When both DAQs are available, the combined loss drops to 0.84% — meaning the dual-DAQ setup rescues ~85% of frames that would otherwise be lost from DAQ1 alone.
+
+## Photobleaching & Baseline Stability
+
+**No detectable photobleaching over 8 hours.** Linear fit on all 561,790 per-frame spatial medians (center 50×50 ROI) shows +2.8% upward drift (+0.65 AU/hr), consistent with thermal warming of the wireless image sensor. Multiple baseline estimation methods (rolling percentile, robust regression, ALS) all confirm the same result.
+
+Key figure: `output/photobleaching_perframe.png` — linear fit directly on per-frame data, no binning or smoothing.
+
+Two complementary analyses:
+- **(A) Raw fluorescence:** Linear fit on 561k per-frame medians shows +2.8% upward drift — no downward trend.
+- **(B) Peak dynamics:** 95th percentile of ΔF/F₀ (10-min windows, global mean F₀) shows +2.1% — peak fluorescence dynamics stable.
+
+Caveat: the 95th percentile tracks brightest frames regardless of cause (calcium + wireless noise). Confirming calcium transient stability specifically requires single-cell extraction.
+
+Publication figure: `output/publication_photobleaching_combined.png/.pdf`
+
+See `docs/photobleaching-claim.md` for full claim language and caveats, `docs/next-steps-baseline-separation.md` for method comparison, and `docs/fluorescence-analysis.md` for detailed analysis.

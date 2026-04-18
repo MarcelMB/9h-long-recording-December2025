@@ -10,7 +10,9 @@ PYTHON = sys.executable
 BASE_DIR = "/Users/mbrosch/Documents/9h_long_recording_December2025"
 DAQ1_DIR = os.path.join(BASE_DIR, "neural_DAQ1")
 DAQ2_DIR = os.path.join(BASE_DIR, "neural_DAQ2")
-ANALYZE_SCRIPT = os.path.join(DAQ1_DIR, "analyze_frames.py")
+SCRIPTS_DIR = os.path.join(BASE_DIR, "scripts")
+OUTPUT_DIR = os.path.join(BASE_DIR, "output")
+ANALYZE_SCRIPT = os.path.join(SCRIPTS_DIR, "analyze_frames.py")
 
 # All AVI files to analyze: (daq_dir, avi_filename_glob_label, results_label)
 DAQ1_AVIS = [
@@ -99,25 +101,24 @@ def main():
     print("\n" + "#"*60)
     print("# PHASE 3: Combining DAQ statistics")
     print("#"*60)
-    run_step("Combine DAQs", [PYTHON, os.path.join(DAQ1_DIR, "combine_daqs.py")])
+    run_step("Combine DAQs", [PYTHON, os.path.join(SCRIPTS_DIR, "combine_daqs.py")])
 
     # Step 4: Remove old output and create stitched videos
     print("\n" + "#"*60)
     print("# PHASE 4: Creating stitched videos")
     print("#"*60)
-    output_dir = os.path.join(DAQ1_DIR, "output")
-    if os.path.exists(output_dir):
+    if os.path.exists(OUTPUT_DIR):
         import shutil
-        print(f"Removing old output: {output_dir}")
-        shutil.rmtree(output_dir)
+        print(f"Removing old output: {OUTPUT_DIR}")
+        shutil.rmtree(OUTPUT_DIR)
     run_step("Create stitched videos",
-             [PYTHON, os.path.join(DAQ1_DIR, "create_stitched_video.py")])
+             [PYTHON, os.path.join(SCRIPTS_DIR, "create_stitched_video.py")])
 
     # Step 5: Run drop analysis
     print("\n" + "#"*60)
     print("# PHASE 5: Drop analysis")
     print("#"*60)
-    run_step("Analyze drops", [PYTHON, os.path.join(DAQ1_DIR, "analyze_drops.py")])
+    run_step("Analyze drops", [PYTHON, os.path.join(SCRIPTS_DIR, "analyze_drops.py")])
 
     total_time = time.time() - t_start
     print(f"\n{'#'*60}")
