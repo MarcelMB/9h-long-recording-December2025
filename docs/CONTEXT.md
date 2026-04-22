@@ -2,7 +2,10 @@
 
 Two DAQs received the same wireless signal from a Miniscope Zero. Broken frames are detected via black row runs and gradient (second derivative) analysis on 200x200 grayscale 20fps AVIs. DAQ1 and DAQ2 frames are matched by unix timestamp (25ms threshold), and the best frame from each pair is stitched into 1-hour output chunks.
 
-**DAQ1: 5.96% broken | DAQ2: 1.40% | Combined: 0.84% (1,799 frames lost in 9hrs)**
+**DAQ1: 3.43 % lost | DAQ2: 0.37 % | Dual-DAQ stitched: 0.10 %**
+(trimmed; MCU-level survival — see [results.md](results.md). The earlier
+AVI-broken-frame numbers 5.96 % / 1.40 % / 0.84 % double-counted the mio
+bit-flip amplification — see [frame_num_bitflip_example.md](frame_num_bitflip_example.md).)
 
 ### Project Structure
 
