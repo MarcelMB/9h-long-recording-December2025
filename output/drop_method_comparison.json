@@ -1,0 +1,225 @@
+{
+  "methods": {
+    "timestamp": {
+      "source": "host buffer_recv_unix_time, gap > 75 ms",
+      "fps": 20.0,
+      "gap_threshold_ms": 75.0
+    },
+    "frame_num": {
+      "source": "MCU frame_num counter, intended - delivered",
+      "fps": 20.0,
+      "head_window": 20,
+      "tail_window": 20
+    }
+  },
+  "DAQ1": {
+    "per_file": [
+      {
+        "file": "WL27_DAQ1_25_12_10_long-2.csv",
+        "ts_drops": 2,
+        "ts_gap_events": 2,
+        "ts_analyzed_frames": 79988,
+        "fn_drops": 0,
+        "fn_intended": 79393,
+        "fn_delivered": 79393,
+        "fn_flags": [
+          "valid_frame_num_below_fn_start",
+          "valid_frame_num_above_fn_end"
+        ],
+        "delta": -2
+      },
+      {
+        "file": "WL27_DAQ1_25_12_10_long-4.csv",
+        "ts_drops": 15,
+        "ts_gap_events": 15,
+        "ts_analyzed_frames": 80639,
+        "fn_drops": 0,
+        "fn_intended": 78707,
+        "fn_delivered": 78707,
+        "fn_flags": [
+          "valid_frame_num_below_fn_start"
+        ],
+        "delta": -15
+      },
+      {
+        "file": "WL27_DAQ1_25_12_10_long-6.csv",
+        "ts_drops": 3,
+        "ts_gap_events": 3,
+        "ts_analyzed_frames": 76829,
+        "fn_drops": 0,
+        "fn_intended": 75326,
+        "fn_delivered": 75326,
+        "fn_flags": [
+          "valid_frame_num_below_fn_start"
+        ],
+        "delta": -3
+      },
+      {
+        "file": "WL27_DAQ1_25_12_10_long-8.csv",
+        "ts_drops": 2,
+        "ts_gap_events": 2,
+        "ts_analyzed_frames": 87114,
+        "fn_drops": 0,
+        "fn_intended": 85913,
+        "fn_delivered": 85913,
+        "fn_flags": [
+          "valid_frame_num_below_fn_start"
+        ],
+        "delta": -2
+      },
+      {
+        "file": "WL27_DAQ1_25_12_10_long-9.csv",
+        "ts_drops": 2,
+        "ts_gap_events": 2,
+        "ts_analyzed_frames": 81466,
+        "fn_drops": 0,
+        "fn_intended": 81766,
+        "fn_delivered": 81766,
+        "fn_flags": [
+          "valid_frame_num_below_fn_start"
+        ],
+        "delta": -2
+      },
+      {
+        "file": "WL27_DAQ1_25_12_10_long-10.csv",
+        "ts_drops": 1,
+        "ts_gap_events": 1,
+        "ts_analyzed_frames": 81110,
+        "fn_drops": 0,
+        "fn_intended": 80326,
+        "fn_delivered": 80326,
+        "fn_flags": [
+          "valid_frame_num_below_fn_start"
+        ],
+        "delta": -1
+      },
+      {
+        "file": "WL27_DAQ1_25_12_10_long-12.csv",
+        "ts_drops": 1,
+        "ts_gap_events": 1,
+        "ts_analyzed_frames": 82697,
+        "fn_drops": 0,
+        "fn_intended": 81286,
+        "fn_delivered": 81286,
+        "fn_flags": [
+          "valid_frame_num_below_fn_start"
+        ],
+        "delta": -1
+      },
+      {
+        "file": "WL27_DAQ1_25_12_10_long-13.csv",
+        "ts_drops": 2,
+        "ts_gap_events": 2,
+        "ts_analyzed_frames": 79660,
+        "fn_drops": 0,
+        "fn_intended": 77854,
+        "fn_delivered": 77854,
+        "fn_flags": [
+          "valid_frame_num_below_fn_start"
+        ],
+        "delta": -2
+      }
+    ],
+    "totals": {
+      "timestamp_drops": 28,
+      "frame_num_drops": 0,
+      "frame_num_intended": 640571,
+      "delta_fn_minus_ts": -28,
+      "timestamp_rate_pct": 0.0044,
+      "frame_num_rate_pct": 0.0
+    }
+  },
+  "DAQ2": {
+    "per_file": [
+      {
+        "file": "WL27_DAQ2_25_12_10_long-2.csv",
+        "ts_drops": 46,
+        "ts_gap_events": 40,
+        "ts_analyzed_frames": 78550,
+        "fn_drops": 0,
+        "fn_intended": 78550,
+        "fn_delivered": 78550,
+        "fn_flags": [],
+        "delta": -46
+      },
+      {
+        "file": "WL27_DAQ2_25_12_10_long-4.csv",
+        "ts_drops": 126,
+        "ts_gap_events": 64,
+        "ts_analyzed_frames": 75532,
+        "fn_drops": 0,
+        "fn_intended": 75401,
+        "fn_delivered": 75401,
+        "fn_flags": [
+          "valid_frame_num_above_fn_end"
+        ],
+        "delta": -126
+      },
+      {
+        "file": "WL27_DAQ2_25_12_10_long-6.csv",
+        "ts_drops": 226,
+        "ts_gap_events": 220,
+        "ts_analyzed_frames": 86155,
+        "fn_drops": 0,
+        "fn_intended": 85920,
+        "fn_delivered": 85920,
+        "fn_flags": [
+          "valid_frame_num_below_fn_start"
+        ],
+        "delta": -226
+      },
+      {
+        "file": "WL27_DAQ2_25_12_10_long-8.csv",
+        "ts_drops": 106,
+        "ts_gap_events": 92,
+        "ts_analyzed_frames": 80395,
+        "fn_drops": 0,
+        "fn_intended": 80290,
+        "fn_delivered": 80290,
+        "fn_flags": [],
+        "delta": -106
+      },
+      {
+        "file": "WL27_DAQ2_25_12_10_long-7.csv",
+        "ts_drops": 94,
+        "ts_gap_events": 87,
+        "ts_analyzed_frames": 83168,
+        "fn_drops": 0,
+        "fn_intended": 81654,
+        "fn_delivered": 81654,
+        "fn_flags": [],
+        "delta": -94
+      },
+      {
+        "file": "WL27_DAQ2_25_12_10_long-9.csv",
+        "ts_drops": 75,
+        "ts_gap_events": 69,
+        "ts_analyzed_frames": 81247,
+        "fn_drops": 0,
+        "fn_intended": 81246,
+        "fn_delivered": 81246,
+        "fn_flags": [],
+        "delta": -75
+      },
+      {
+        "file": "WL27_DAQ2_25_12_10_long-10.csv",
+        "ts_drops": 190,
+        "ts_gap_events": 184,
+        "ts_analyzed_frames": 77886,
+        "fn_drops": 0,
+        "fn_intended": 77884,
+        "fn_delivered": 77884,
+        "fn_flags": [],
+        "delta": -190
+      }
+    ],
+    "totals": {
+      "timestamp_drops": 863,
+      "frame_num_drops": 0,
+      "frame_num_intended": 560945,
+      "delta_fn_minus_ts": -863,
+      "timestamp_rate_pct": 0.1538,
+      "frame_num_rate_pct": 0.0
+    }
+  }
+}

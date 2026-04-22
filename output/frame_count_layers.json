@@ -1,0 +1,126 @@
+{
+  "DAQ1": {
+    "long-2": {
+      "intended": 79393,
+      "delivered": 79393,
+      "reconstructed": 80588,
+      "avi": 80588,
+      "label": "long-2",
+      "avi_file": "WL27_DAQ1_25_12_10_long-2.avi"
+    },
+    "long-4": {
+      "intended": 78707,
+      "delivered": 78707,
+      "reconstructed": 80639,
+      "avi": 80639,
+      "label": "long-4",
+      "avi_file": "WL27_DAQ1_25_12_10_long-4.avi"
+    },
+    "long-6": {
+      "intended": 75326,
+      "delivered": 75326,
+      "reconstructed": 76829,
+      "avi": 76828,
+      "label": "long-6",
+      "avi_file": "WL27_DAQ1_25_12_10_long-6.avi"
+    },
+    "long-8": {
+      "intended": 85913,
+      "delivered": 85913,
+      "reconstructed": 87114,
+      "avi": 87114,
+      "label": "long-8",
+      "avi_file": "WL27_DAQ1_25_12_10_long-8-002.avi"
+    },
+    "long-9": {
+      "intended": 81766,
+      "delivered": 81766,
+      "reconstructed": 84566,
+      "avi": 84565,
+      "label": "long-9",
+      "avi_file": "WL27_DAQ1_25_12_10_long-9-001.avi"
+    },
+    "long-10": {
+      "intended": 80326,
+      "delivered": 80326,
+      "reconstructed": 81110,
+      "avi": 81110,
+      "label": "long-10",
+      "avi_file": "WL27_DAQ1_25_12_10_long-10-012.avi"
+    },
+    "long-12": {
+      "intended": 81286,
+      "delivered": 81286,
+      "reconstructed": 82697,
+      "avi": 82697,
+      "label": "long-12",
+      "avi_file": "WL27_DAQ1_25_12_10_long-12-013.avi"
+    },
+    "long-13": {
+      "intended": 77854,
+      "delivered": 77854,
+      "reconstructed": 79660,
+      "avi": 79660,
+      "label": "long-13",
+      "avi_file": "WL27_DAQ1_25_12_10_long-13-004.avi"
+    }
+  },
+  "DAQ2": {
+    "long-2": {
+      "intended": 78550,
+      "delivered": 78550,
+      "reconstructed": 78550,
+      "avi": 78549,
+      "label": "long-2",
+      "avi_file": "WL27_DAQ2_25_12_10_long-2-015.avi"
+    },
+    "long-4": {
+      "intended": 75401,
+      "delivered": 75401,
+      "reconstructed": 75532,
+      "avi": 75531,
+      "label": "long-4",
+      "avi_file": "WL27_DAQ2_25_12_10_long-4-014.avi"
+    },
+    "long-6": {
+      "intended": 85920,
+      "delivered": 85920,
+      "reconstructed": 86155,
+      "avi": 86155,
+      "label": "long-6",
+      "avi_file": "WL27_DAQ2_25_12_10_long-6-013.avi"
+    },
+    "long-8": {
+      "intended": 80290,
+      "delivered": 80290,
+      "reconstructed": 80395,
+      "avi": 80394,
+      "label": "long-8",
+      "avi_file": "WL27_DAQ2_25_12_10_long-8-004.avi"
+    },
+    "long-7": {
+      "intended": 81654,
+      "delivered": 81654,
+      "reconstructed": 83168,
+      "avi": 83167,
+      "label": "long-7",
+      "avi_file": "WL27_DAQ2_25_12_10_long-7-005.avi"
+    },
+    "long-9": {
+      "intended": 81246,
+      "delivered": 81246,
+      "reconstructed": 81247,
+      "avi": 81246,
+      "label": "long-9",
+      "avi_file": "WL27_DAQ2_25_12_10_long-9-002.avi"
+    },
+    "long-10": {
+      "intended": 77884,
+      "delivered": 77884,
+      "reconstructed": 77886,
+      "avi": 77885,
+      "label": "long-10",
+      "avi_file": "WL27_DAQ2_25_12_10_long-10-008.avi"
+    }
+  }
+}

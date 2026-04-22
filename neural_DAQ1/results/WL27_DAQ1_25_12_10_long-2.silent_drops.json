@@ -1,0 +1,27 @@
+{
+  "file": "WL27_DAQ1_25_12_10_long-2.csv",
+  "daq": 1,
+  "fps": 20.0,
+  "expected_period_ms": 50.0,
+  "gap_threshold_ms": 75.0,
+  "total_frames_in_csv": 80588,
+  "trim_seconds": 30,
+  "trim_frames": 600,
+  "analyzed_frames": 79988,
+  "host_timestamp": {
+    "silent_drops": 2,
+    "gap_events": 2,
+    "events": [
+      {
+        "at_frame_idx": 646,
+        "dt_s": 0.07967591285705566,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 25872,
+        "dt_s": 0.08051896095275879,
+        "missed": 1
+      }
+    ]
+  }
+}

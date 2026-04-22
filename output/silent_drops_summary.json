@@ -1,0 +1,112 @@
+{
+  "fps": 20.0,
+  "gap_threshold_ms": 75.0,
+  "DAQ1": {
+    "per_file": [
+      {
+        "file": "WL27_DAQ1_25_12_10_long-2.csv",
+        "analyzed_frames": 79988,
+        "host_ts_drops": 2,
+        "host_ts_gap_events": 2
+      },
+      {
+        "file": "WL27_DAQ1_25_12_10_long-4.csv",
+        "analyzed_frames": 80639,
+        "host_ts_drops": 15,
+        "host_ts_gap_events": 15
+      },
+      {
+        "file": "WL27_DAQ1_25_12_10_long-6.csv",
+        "analyzed_frames": 76829,
+        "host_ts_drops": 3,
+        "host_ts_gap_events": 3
+      },
+      {
+        "file": "WL27_DAQ1_25_12_10_long-8.csv",
+        "analyzed_frames": 87114,
+        "host_ts_drops": 2,
+        "host_ts_gap_events": 2
+      },
+      {
+        "file": "WL27_DAQ1_25_12_10_long-9.csv",
+        "analyzed_frames": 81466,
+        "host_ts_drops": 2,
+        "host_ts_gap_events": 2
+      },
+      {
+        "file": "WL27_DAQ1_25_12_10_long-10.csv",
+        "analyzed_frames": 81110,
+        "host_ts_drops": 1,
+        "host_ts_gap_events": 1
+      },
+      {
+        "file": "WL27_DAQ1_25_12_10_long-12.csv",
+        "analyzed_frames": 82697,
+        "host_ts_drops": 1,
+        "host_ts_gap_events": 1
+      },
+      {
+        "file": "WL27_DAQ1_25_12_10_long-13.csv",
+        "analyzed_frames": 79660,
+        "host_ts_drops": 2,
+        "host_ts_gap_events": 2
+      }
+    ],
+    "totals": {
+      "analyzed_frames": 649503,
+      "host_ts_drops": 28,
+      "host_ts_gap_events": 28
+    }
+  },
+  "DAQ2": {
+    "per_file": [
+      {
+        "file": "WL27_DAQ2_25_12_10_long-2.csv",
+        "analyzed_frames": 78550,
+        "host_ts_drops": 46,
+        "host_ts_gap_events": 40
+      },
+      {
+        "file": "WL27_DAQ2_25_12_10_long-4.csv",
+        "analyzed_frames": 75532,
+        "host_ts_drops": 126,
+        "host_ts_gap_events": 64
+      },
+      {
+        "file": "WL27_DAQ2_25_12_10_long-6.csv",
+        "analyzed_frames": 86155,
+        "host_ts_drops": 226,
+        "host_ts_gap_events": 220
+      },
+      {
+        "file": "WL27_DAQ2_25_12_10_long-8.csv",
+        "analyzed_frames": 80395,
+        "host_ts_drops": 106,
+        "host_ts_gap_events": 92
+      },
+      {
+        "file": "WL27_DAQ2_25_12_10_long-7.csv",
+        "analyzed_frames": 83168,
+        "host_ts_drops": 94,
+        "host_ts_gap_events": 87
+      },
+      {
+        "file": "WL27_DAQ2_25_12_10_long-9.csv",
+        "analyzed_frames": 81247,
+        "host_ts_drops": 75,
+        "host_ts_gap_events": 69
+      },
+      {
+        "file": "WL27_DAQ2_25_12_10_long-10.csv",
+        "analyzed_frames": 77886,
+        "host_ts_drops": 190,
+        "host_ts_gap_events": 184
+      }
+    ],
+    "totals": {
+      "analyzed_frames": 562933,
+      "host_ts_drops": 863,
+      "host_ts_gap_events": 756
+    }
+  }
+}

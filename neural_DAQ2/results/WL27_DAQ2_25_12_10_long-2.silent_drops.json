@@ -1,0 +1,217 @@
+{
+  "file": "WL27_DAQ2_25_12_10_long-2.csv",
+  "daq": 2,
+  "fps": 20.0,
+  "expected_period_ms": 50.0,
+  "gap_threshold_ms": 75.0,
+  "total_frames_in_csv": 78550,
+  "trim_seconds": 0,
+  "trim_frames": 0,
+  "analyzed_frames": 78550,
+  "host_timestamp": {
+    "silent_drops": 46,
+    "gap_events": 40,
+    "events": [
+      {
+        "at_frame_idx": 10192,
+        "dt_s": 0.08788108825683594,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 10437,
+        "dt_s": 0.0989980697631836,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 10438,
+        "dt_s": 0.0837399959564209,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 10457,
+        "dt_s": 0.12510371208190918,
+        "missed": 2
+      },
+      {
+        "at_frame_idx": 10705,
+        "dt_s": 0.27776598930358887,
+        "missed": 5
+      },
+      {
+        "at_frame_idx": 10754,
+        "dt_s": 0.07541203498840332,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 10764,
+        "dt_s": 0.08641815185546875,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 10772,
+        "dt_s": 0.08352208137512207,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 10796,
+        "dt_s": 0.07616901397705078,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 10814,
+        "dt_s": 0.09503579139709473,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 14649,
+        "dt_s": 0.08676600456237793,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 15257,
+        "dt_s": 0.07882213592529297,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 15983,
+        "dt_s": 0.08366894721984863,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 21315,
+        "dt_s": 0.10979104042053223,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 21350,
+        "dt_s": 0.07826995849609375,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 21921,
+        "dt_s": 0.07544827461242676,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 24511,
+        "dt_s": 0.07554507255554199,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 30180,
+        "dt_s": 0.08061909675598145,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 30406,
+        "dt_s": 0.08226299285888672,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 31618,
+        "dt_s": 0.07864975929260254,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 34650,
+        "dt_s": 0.07872676849365234,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 39888,
+        "dt_s": 0.08878588676452637,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 41317,
+        "dt_s": 0.07511615753173828,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 49198,
+        "dt_s": 0.08144402503967285,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 49806,
+        "dt_s": 0.08048605918884277,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 52231,
+        "dt_s": 0.08758997917175293,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 55260,
+        "dt_s": 0.07611393928527832,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 56046,
+        "dt_s": 0.13689970970153809,
+        "missed": 2
+      },
+      {
+        "at_frame_idx": 58900,
+        "dt_s": 0.07522702217102051,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 58971,
+        "dt_s": 0.07674789428710938,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 59091,
+        "dt_s": 0.08532094955444336,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 59166,
+        "dt_s": 0.08377909660339355,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 59171,
+        "dt_s": 0.07653021812438965,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 59233,
+        "dt_s": 0.08304190635681152,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 59293,
+        "dt_s": 0.0751650333404541,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 59459,
+        "dt_s": 0.09272599220275879,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 62056,
+        "dt_s": 0.07810807228088379,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 72237,
+        "dt_s": 0.07987809181213379,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 73225,
+        "dt_s": 0.09594893455505371,
+        "missed": 1
+      },
+      {
+        "at_frame_idx": 76428,
+        "dt_s": 0.07777595520019531,
+        "missed": 1
+      }
+    ]
+  }
+}

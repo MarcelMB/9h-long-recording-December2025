@@ -1,0 +1,206 @@
+{
+  "fps": 20.0,
+  "method": "frame_num_counter",
+  "frame_num_valid_max": 200000,
+  "sentinels": [
+    2147483647,
+    2147483648,
+    4294836224,
+    4294967295
+  ],
+  "head_window": 20,
+  "tail_window": 20,
+  "DAQ1": {
+    "per_file": [
+      {
+        "file": "WL27_DAQ1_25_12_10_long-2.csv",
+        "fn_start": 1572,
+        "fn_end": 80964,
+        "intended": 79393,
+        "delivered": 79393,
+        "silent_drops": 0,
+        "filtered_rows": 24,
+        "flags": [
+          "valid_frame_num_below_fn_start",
+          "valid_frame_num_above_fn_end"
+        ]
+      },
+      {
+        "file": "WL27_DAQ1_25_12_10_long-4.csv",
+        "fn_start": 695,
+        "fn_end": 79401,
+        "intended": 78707,
+        "delivered": 78707,
+        "silent_drops": 0,
+        "filtered_rows": 43,
+        "flags": [
+          "valid_frame_num_below_fn_start"
+        ]
+      },
+      {
+        "file": "WL27_DAQ1_25_12_10_long-6.csv",
+        "fn_start": 629,
+        "fn_end": 75954,
+        "intended": 75326,
+        "delivered": 75326,
+        "silent_drops": 0,
+        "filtered_rows": 14,
+        "flags": [
+          "valid_frame_num_below_fn_start"
+        ]
+      },
+      {
+        "file": "WL27_DAQ1_25_12_10_long-8.csv",
+        "fn_start": 318,
+        "fn_end": 86230,
+        "intended": 85913,
+        "delivered": 85913,
+        "silent_drops": 0,
+        "filtered_rows": 4,
+        "flags": [
+          "valid_frame_num_below_fn_start"
+        ]
+      },
+      {
+        "file": "WL27_DAQ1_25_12_10_long-9.csv",
+        "fn_start": 405,
+        "fn_end": 82170,
+        "intended": 81766,
+        "delivered": 81766,
+        "silent_drops": 0,
+        "filtered_rows": 17,
+        "flags": [
+          "valid_frame_num_below_fn_start"
+        ]
+      },
+      {
+        "file": "WL27_DAQ1_25_12_10_long-10.csv",
+        "fn_start": 385,
+        "fn_end": 80710,
+        "intended": 80326,
+        "delivered": 80326,
+        "silent_drops": 0,
+        "filtered_rows": 5,
+        "flags": [
+          "valid_frame_num_below_fn_start"
+        ]
+      },
+      {
+        "file": "WL27_DAQ1_25_12_10_long-12.csv",
+        "fn_start": 498,
+        "fn_end": 81783,
+        "intended": 81286,
+        "delivered": 81286,
+        "silent_drops": 0,
+        "filtered_rows": 12,
+        "flags": [
+          "valid_frame_num_below_fn_start"
+        ]
+      },
+      {
+        "file": "WL27_DAQ1_25_12_10_long-13.csv",
+        "fn_start": 447,
+        "fn_end": 78300,
+        "intended": 77854,
+        "delivered": 77854,
+        "silent_drops": 0,
+        "filtered_rows": 5,
+        "flags": [
+          "valid_frame_num_below_fn_start"
+        ]
+      }
+    ],
+    "totals": {
+      "intended": 640571,
+      "delivered": 640571,
+      "silent_drops": 0,
+      "filtered_rows": 124,
+      "silent_drop_rate_pct": 0.0
+    }
+  },
+  "DAQ2": {
+    "per_file": [
+      {
+        "file": "WL27_DAQ2_25_12_10_long-2.csv",
+        "fn_start": 861,
+        "fn_end": 79410,
+        "intended": 78550,
+        "delivered": 78550,
+        "silent_drops": 0,
+        "filtered_rows": 0,
+        "flags": []
+      },
+      {
+        "file": "WL27_DAQ2_25_12_10_long-4.csv",
+        "fn_start": 672,
+        "fn_end": 76072,
+        "intended": 75401,
+        "delivered": 75401,
+        "silent_drops": 0,
+        "filtered_rows": 35,
+        "flags": [
+          "valid_frame_num_above_fn_end"
+        ]
+      },
+      {
+        "file": "WL27_DAQ2_25_12_10_long-6.csv",
+        "fn_start": 369,
+        "fn_end": 86288,
+        "intended": 85920,
+        "delivered": 85920,
+        "silent_drops": 0,
+        "filtered_rows": 27,
+        "flags": [
+          "valid_frame_num_below_fn_start"
+        ]
+      },
+      {
+        "file": "WL27_DAQ2_25_12_10_long-8.csv",
+        "fn_start": 467,
+        "fn_end": 80756,
+        "intended": 80290,
+        "delivered": 80290,
+        "silent_drops": 0,
+        "filtered_rows": 0,
+        "flags": []
+      },
+      {
+        "file": "WL27_DAQ2_25_12_10_long-7.csv",
+        "fn_start": 512,
+        "fn_end": 82165,
+        "intended": 81654,
+        "delivered": 81654,
+        "silent_drops": 0,
+        "filtered_rows": 0,
+        "flags": []
+      },
+      {
+        "file": "WL27_DAQ2_25_12_10_long-9.csv",
+        "fn_start": 598,
+        "fn_end": 81843,
+        "intended": 81246,
+        "delivered": 81246,
+        "silent_drops": 0,
+        "filtered_rows": 1,
+        "flags": []
+      },
+      {
+        "file": "WL27_DAQ2_25_12_10_long-10.csv",
+        "fn_start": 471,
+        "fn_end": 78354,
+        "intended": 77884,
+        "delivered": 77884,
+        "silent_drops": 0,
+        "filtered_rows": 0,
+        "flags": []
+      }
+    ],
+    "totals": {
+      "intended": 560945,
+      "delivered": 560945,
+      "silent_drops": 0,
+      "filtered_rows": 63,
+      "silent_drop_rate_pct": 0.0
+    }
+  }
+}
