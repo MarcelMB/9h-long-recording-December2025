@@ -95,9 +95,108 @@ The signature — a "too-early" gap (< 45 ms, 5.4 % of DAQ2 frames vs 1.0 % on D
 
 Since the miniscope optical cadence is essentially identical on both DAQs (medians differ by ~1 ms), the difference is in how each host's USB stack hands off buffers — likely a different USB port, hub, or capture-process priority on the DAQ2 side. This is not a silent-drop issue (all these gaps are under the 75 ms threshold), but any downstream analysis that assumes a smooth 20 Hz tempo within a single DAQ (e.g. event timing, peak-fitting) should keep this asymmetry in mind.
 
+## Method B — MCU `frame_num` counter (cross-validation)
+
+The host-timestamp method (above) is sensitive to host-side USB / OS scheduling
+jitter: a buffer arriving ~100 ms late due to USB batching looks exactly like a
+dropped frame (gap > 75 ms). To cross-check, we added a second, independent
+method that uses the MCU's own `frame_num` counter — the device increments it
+for every frame it *intends* to send, regardless of whether the radio delivers
+it, so gaps in the `frame_num` sequence that actually appear in the CSV are
+direct evidence of frames that never arrived.
+
+Device-side columns are bit-flipped on the wireless link at ~0.01 % of rows,
+but corruption is sparse and the first/last buffers of each chunk are clean.
+The new script filters out known uint32 sentinels (`0xFFFFFFFF`, `0xFFFE0000`,
+`0x80000000`, `0x7FFFFFFF`) and any `frame_num > 200 000` (well above the
+~90 000 frames a single chunk can hold at 20 FPS).
+
+**Per-chunk algorithm:**
+
+1. `fn_start` = smallest valid `frame_num` that appears **at least twice** in
+   the first 20 rows of the CSV (quorum filter — see "within-range corruption"
+   below).
+2. `fn_end`   = largest valid `frame_num` that appears at least twice in the
+   last 20 rows of the CSV.
+3. `intended`  = `fn_end − fn_start + 1` (frames the MCU sent during this chunk).
+4. `delivered` = number of unique valid `frame_num` values in `[fn_start, fn_end]`
+   (MCU-intended frames for which at least one buffer survived the link).
+5. **Silent drops** = `intended − delivered`.
+
+### Results — Method B
+
+| DAQ | Intended (MCU) | Delivered | Silent drops | Rate |
+|-----|---------------:|----------:|-------------:|-----:|
+| DAQ1 | 640,571 | 640,571 | **0** | 0.0000 % |
+| DAQ2 | 560,945 | 560,945 | **0** | 0.0000 % |
+
+### Per-chunk comparison, both methods
+
+| DAQ1 chunk | Method A (timestamp) | Method B (frame_num) | Δ (B−A) |
+|------------|---------------------:|---------------------:|--------:|
+| `long-2`  |  2 | 0 |  −2 |
+| `long-4`  | 15 | 0 | −15 |
+| `long-6`  |  3 | 0 |  −3 |
+| `long-8`  |  2 | 0 |  −2 |
+| `long-9`  |  2 | 0 |  −2 |
+| `long-10` |  1 | 0 |  −1 |
+| `long-12` |  1 | 0 |  −1 |
+| `long-13` |  2 | 0 |  −2 |
+| **Total** | **28** | **0** | **−28** |
+
+| DAQ2 chunk | Method A (timestamp) | Method B (frame_num) | Δ (B−A) |
+|------------|---------------------:|---------------------:|--------:|
+| `long-2`  |  46 | 0 |  −46 |
+| `long-4`  | 126 | 0 | −126 |
+| `long-6`  | 226 | 0 | −226 |
+| `long-7`  |  94 | 0 |  −94 |
+| `long-8`  | 106 | 0 | −106 |
+| `long-9`  |  75 | 0 |  −75 |
+| `long-10` | 190 | 0 | −190 |
+| **Total** | **863** | **0** | **−863** |
+
+### Interpretation
+
+Across **1.2 million frames** the MCU attempted to transmit over seven hours
+on two wireless links, the `frame_num` counter gives the same answer for every
+chunk: **0 silent drops.** Every frame the device sent arrived at the host
+with at least one buffer surviving. All 891 "drops" reported by the
+host-timestamp method (28 on DAQ1, 863 on DAQ2) correspond to inter-frame
+gaps > 75 ms with no accompanying skip in the MCU's `frame_num` sequence —
+they are false positives from host-side USB / OS scheduling jitter, not
+frame loss. DAQ2's higher false-positive count matches the bimodal arrival
+distribution (peaks at 47.8 ms and 52 ms) described above: occasional USB
+batches produce gaps > 75 ms without any actual missed frame.
+
+### Within-range `frame_num` corruption and the quorum filter
+
+A first pass of Method B reported 242 drops in DAQ1 `long-13`. Drilling into
+that chunk (`scripts/diagnose_long13.py`) showed the "drops" were an artefact:
+one row among the first 20 had a within-range `frame_num` bit-flip to 193,
+while all other head-window rows read the true starting value 447. Picking
+`fn_start` as the plain `min` of the head window dragged the counter floor
+down to 193 and inflated `intended` by 254, creating 242 phantom missing
+frame_nums all clustered in `[193, 446]` — none of which were ever real MCU
+frames.
+
+The fix was to require **quorum** on the boundary values: a candidate
+`fn_start` / `fn_end` must appear at least twice in the head/tail window.
+Real frames appear 7–8 times (one row per buffer), so a single bit-flip to a
+value never seen elsewhere is rejected. After this change, `long-10`'s lone
+drop disappeared too (same root cause). For any downstream use of
+device-side metadata, this is the general lesson: the sentinel + range filter
+catches obvious corruption (uint32 max / high-bit sentinels), but within-range
+single-bit flips survive and can only be caught by agreement across
+redundant buffers.
+
 ## Files
 
-- Script: `scripts/analyze_silent_drops.py`
-- Per-file JSON details: `neural_DAQ{1,2}/results/<csv_stem>.silent_drops.json`
-- Combined summary: `output/silent_drops_summary.json`
-- Plot: `output/silent_drops.png`
+- Script (method A — timestamps): `scripts/analyze_silent_drops.py`
+- Script (method B — frame_num): `scripts/analyze_frame_num_drops.py`
+- Comparison script: `scripts/compare_drop_methods.py`
+- Per-file JSONs: `neural_DAQ{1,2}/results/<csv_stem>.silent_drops.json` (A)
+  and `…frame_num_drops.json` (B)
+- Combined summaries: `output/silent_drops_summary.json` (A),
+  `output/frame_num_drops_summary.json` (B)
+- Comparison: `output/drop_method_comparison.json`, `output/drop_method_comparison.png`
+- Plots: `output/silent_drops.png` (A), `output/frame_num_drops.png` (B)
