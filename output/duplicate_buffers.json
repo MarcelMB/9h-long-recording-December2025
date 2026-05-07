@@ -1,0 +1,966 @@
+{
+  "per_chunk": [
+    {
+      "daq": "DAQ1",
+      "stem": "long-2",
+      "csv": "WL27_DAQ1_25_12_10_long-2.csv",
+      "n_rows": 633414,
+      "exact": {
+        "label": "exact metadata match (frame_num, buffer_count, timestamp, write_timestamp, recv_time)",
+        "total_rows": 633414,
+        "duplicate_groups": 0,
+        "extra_rows": 0,
+        "worst": []
+      },
+      "rfi_slot": {
+        "label": "RFI slot collision (reconstructed_frame_index, frame_buffer_count)",
+        "total_rows": 633414,
+        "duplicate_groups": 49,
+        "extra_rows": 49,
+        "worst": [
+          {
+            "reconstructed_frame_index": 171,
+            "frame_buffer_count": 3,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 48592,
+            "frame_buffer_count": 3,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 55177,
+            "frame_buffer_count": 2,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 59097,
+            "frame_buffer_count": 1,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 67905,
+            "frame_buffer_count": 3,
+            "0": 2
+          }
+        ]
+      },
+      "fn_slot": {
+        "label": "frame_num slot collision (frame_num, buffer_count) [sentinels filtered]",
+        "total_rows": 633390,
+        "duplicate_groups": 47,
+        "extra_rows": 47,
+        "worst": [
+          {
+            "frame_num": 4876,
+            "buffer_count": 39013,
+            "0": 2
+          },
+          {
+            "frame_num": 65636,
+            "buffer_count": 525089,
+            "0": 2
+          },
+          {
+            "frame_num": 46464,
+            "buffer_count": 371715,
+            "0": 2
+          },
+          {
+            "frame_num": 46742,
+            "buffer_count": 373939,
+            "0": 2
+          },
+          {
+            "frame_num": 47252,
+            "buffer_count": 378019,
+            "0": 2
+          }
+        ]
+      }
+    },
+    {
+      "daq": "DAQ2",
+      "stem": "long-2",
+      "csv": "WL27_DAQ2_25_12_10_long-2.csv",
+      "n_rows": 628399,
+      "exact": {
+        "label": "exact metadata match (frame_num, buffer_count, timestamp, write_timestamp, recv_time)",
+        "total_rows": 628399,
+        "duplicate_groups": 0,
+        "extra_rows": 0,
+        "worst": []
+      },
+      "rfi_slot": {
+        "label": "RFI slot collision (reconstructed_frame_index, frame_buffer_count)",
+        "total_rows": 628399,
+        "duplicate_groups": 0,
+        "extra_rows": 0,
+        "worst": []
+      },
+      "fn_slot": {
+        "label": "frame_num slot collision (frame_num, buffer_count) [sentinels filtered]",
+        "total_rows": 628399,
+        "duplicate_groups": 0,
+        "extra_rows": 0,
+        "worst": []
+      }
+    },
+    {
+      "daq": "DAQ1",
+      "stem": "long-4",
+      "csv": "WL27_DAQ1_25_12_10_long-4.csv",
+      "n_rows": 627293,
+      "exact": {
+        "label": "exact metadata match (frame_num, buffer_count, timestamp, write_timestamp, recv_time)",
+        "total_rows": 627293,
+        "duplicate_groups": 0,
+        "extra_rows": 0,
+        "worst": []
+      },
+      "rfi_slot": {
+        "label": "RFI slot collision (reconstructed_frame_index, frame_buffer_count)",
+        "total_rows": 627293,
+        "duplicate_groups": 36,
+        "extra_rows": 36,
+        "worst": [
+          {
+            "reconstructed_frame_index": 5914,
+            "frame_buffer_count": 3,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 15589,
+            "frame_buffer_count": 1,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 54112,
+            "frame_buffer_count": 3,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 55858,
+            "frame_buffer_count": 3,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 56760,
+            "frame_buffer_count": 2,
+            "0": 2
+          }
+        ]
+      },
+      "fn_slot": {
+        "label": "frame_num slot collision (frame_num, buffer_count) [sentinels filtered]",
+        "total_rows": 627250,
+        "duplicate_groups": 43,
+        "extra_rows": 43,
+        "worst": [
+          {
+            "frame_num": 6531,
+            "buffer_count": 52249,
+            "0": 2
+          },
+          {
+            "frame_num": 63898,
+            "buffer_count": 511185,
+            "0": 2
+          },
+          {
+            "frame_num": 55505,
+            "buffer_count": 444045,
+            "0": 2
+          },
+          {
+            "frame_num": 57370,
+            "buffer_count": 458963,
+            "0": 2
+          },
+          {
+            "frame_num": 58893,
+            "buffer_count": 471147,
+            "0": 2
+          }
+        ]
+      }
+    },
+    {
+      "daq": "DAQ2",
+      "stem": "long-4",
+      "csv": "WL27_DAQ2_25_12_10_long-4.csv",
+      "n_rows": 603039,
+      "exact": {
+        "label": "exact metadata match (frame_num, buffer_count, timestamp, write_timestamp, recv_time)",
+        "total_rows": 603039,
+        "duplicate_groups": 0,
+        "extra_rows": 0,
+        "worst": []
+      },
+      "rfi_slot": {
+        "label": "RFI slot collision (reconstructed_frame_index, frame_buffer_count)",
+        "total_rows": 603039,
+        "duplicate_groups": 18,
+        "extra_rows": 18,
+        "worst": [
+          {
+            "reconstructed_frame_index": 20791,
+            "frame_buffer_count": 1,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 45755,
+            "frame_buffer_count": 1,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 56283,
+            "frame_buffer_count": 3,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 56278,
+            "frame_buffer_count": 2,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 46375,
+            "frame_buffer_count": 7,
+            "0": 2
+          }
+        ]
+      },
+      "fn_slot": {
+        "label": "frame_num slot collision (frame_num, buffer_count) [sentinels filtered]",
+        "total_rows": 603004,
+        "duplicate_groups": 1,
+        "extra_rows": 1,
+        "worst": [
+          {
+            "frame_num": 23455,
+            "buffer_count": 187646,
+            "0": 2
+          }
+        ]
+      }
+    },
+    {
+      "daq": "DAQ1",
+      "stem": "long-6",
+      "csv": "WL27_DAQ1_25_12_10_long-6.csv",
+      "n_rows": 600503,
+      "exact": {
+        "label": "exact metadata match (frame_num, buffer_count, timestamp, write_timestamp, recv_time)",
+        "total_rows": 600503,
+        "duplicate_groups": 0,
+        "extra_rows": 0,
+        "worst": []
+      },
+      "rfi_slot": {
+        "label": "RFI slot collision (reconstructed_frame_index, frame_buffer_count)",
+        "total_rows": 600503,
+        "duplicate_groups": 23,
+        "extra_rows": 23,
+        "worst": [
+          {
+            "reconstructed_frame_index": 1753,
+            "frame_buffer_count": 3,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 38014,
+            "frame_buffer_count": 0,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 62162,
+            "frame_buffer_count": 2,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 60220,
+            "frame_buffer_count": 2,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 58735,
+            "frame_buffer_count": 2,
+            "0": 2
+          }
+        ]
+      },
+      "fn_slot": {
+        "label": "frame_num slot collision (frame_num, buffer_count) [sentinels filtered]",
+        "total_rows": 600489,
+        "duplicate_groups": 44,
+        "extra_rows": 44,
+        "worst": [
+          {
+            "frame_num": 938,
+            "buffer_count": 7508,
+            "0": 2
+          },
+          {
+            "frame_num": 6209,
+            "buffer_count": 49678,
+            "0": 2
+          },
+          {
+            "frame_num": 29288,
+            "buffer_count": 234310,
+            "0": 2
+          },
+          {
+            "frame_num": 29401,
+            "buffer_count": 235210,
+            "0": 2
+          },
+          {
+            "frame_num": 34358,
+            "buffer_count": 274868,
+            "0": 2
+          }
+        ]
+      }
+    },
+    {
+      "daq": "DAQ2",
+      "stem": "long-6",
+      "csv": "WL27_DAQ2_25_12_10_long-6.csv",
+      "n_rows": 687248,
+      "exact": {
+        "label": "exact metadata match (frame_num, buffer_count, timestamp, write_timestamp, recv_time)",
+        "total_rows": 687248,
+        "duplicate_groups": 0,
+        "extra_rows": 0,
+        "worst": []
+      },
+      "rfi_slot": {
+        "label": "RFI slot collision (reconstructed_frame_index, frame_buffer_count)",
+        "total_rows": 687248,
+        "duplicate_groups": 7,
+        "extra_rows": 7,
+        "worst": [
+          {
+            "reconstructed_frame_index": 5553,
+            "frame_buffer_count": 7,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 5833,
+            "frame_buffer_count": 7,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 5911,
+            "frame_buffer_count": 7,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 6139,
+            "frame_buffer_count": 6,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 6208,
+            "frame_buffer_count": 1,
+            "0": 2
+          }
+        ]
+      },
+      "fn_slot": {
+        "label": "frame_num slot collision (frame_num, buffer_count) [sentinels filtered]",
+        "total_rows": 687221,
+        "duplicate_groups": 3,
+        "extra_rows": 3,
+        "worst": [
+          {
+            "frame_num": 3085,
+            "buffer_count": 24680,
+            "0": 2
+          },
+          {
+            "frame_num": 3087,
+            "buffer_count": 24698,
+            "0": 2
+          },
+          {
+            "frame_num": 5946,
+            "buffer_count": 47570,
+            "0": 2
+          }
+        ]
+      }
+    },
+    {
+      "daq": "DAQ1",
+      "stem": "long-8",
+      "csv": "WL27_DAQ1_25_12_10_long-8.csv",
+      "n_rows": 685485,
+      "exact": {
+        "label": "exact metadata match (frame_num, buffer_count, timestamp, write_timestamp, recv_time)",
+        "total_rows": 685485,
+        "duplicate_groups": 0,
+        "extra_rows": 0,
+        "worst": []
+      },
+      "rfi_slot": {
+        "label": "RFI slot collision (reconstructed_frame_index, frame_buffer_count)",
+        "total_rows": 685485,
+        "duplicate_groups": 22,
+        "extra_rows": 22,
+        "worst": [
+          {
+            "reconstructed_frame_index": 2231,
+            "frame_buffer_count": 3,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 2242,
+            "frame_buffer_count": 3,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 82700,
+            "frame_buffer_count": 2,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 82254,
+            "frame_buffer_count": 2,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 51019,
+            "frame_buffer_count": 3,
+            "0": 2
+          }
+        ]
+      },
+      "fn_slot": {
+        "label": "frame_num slot collision (frame_num, buffer_count) [sentinels filtered]",
+        "total_rows": 685481,
+        "duplicate_groups": 50,
+        "extra_rows": 50,
+        "worst": [
+          {
+            "frame_num": 1075,
+            "buffer_count": 8600,
+            "0": 2
+          },
+          {
+            "frame_num": 50310,
+            "buffer_count": 402483,
+            "0": 2
+          },
+          {
+            "frame_num": 39101,
+            "buffer_count": 312808,
+            "0": 2
+          },
+          {
+            "frame_num": 39811,
+            "buffer_count": 318490,
+            "0": 2
+          },
+          {
+            "frame_num": 40992,
+            "buffer_count": 327942,
+            "0": 2
+          }
+        ]
+      }
+    },
+    {
+      "daq": "DAQ2",
+      "stem": "long-8",
+      "csv": "WL27_DAQ2_25_12_10_long-8.csv",
+      "n_rows": 642279,
+      "exact": {
+        "label": "exact metadata match (frame_num, buffer_count, timestamp, write_timestamp, recv_time)",
+        "total_rows": 642279,
+        "duplicate_groups": 0,
+        "extra_rows": 0,
+        "worst": []
+      },
+      "rfi_slot": {
+        "label": "RFI slot collision (reconstructed_frame_index, frame_buffer_count)",
+        "total_rows": 642279,
+        "duplicate_groups": 0,
+        "extra_rows": 0,
+        "worst": []
+      },
+      "fn_slot": {
+        "label": "frame_num slot collision (frame_num, buffer_count) [sentinels filtered]",
+        "total_rows": 642279,
+        "duplicate_groups": 0,
+        "extra_rows": 0,
+        "worst": []
+      }
+    },
+    {
+      "daq": "DAQ1",
+      "stem": "long-9",
+      "csv": "WL27_DAQ1_25_12_10_long-9.csv",
+      "n_rows": 651909,
+      "exact": {
+        "label": "exact metadata match (frame_num, buffer_count, timestamp, write_timestamp, recv_time)",
+        "total_rows": 651909,
+        "duplicate_groups": 0,
+        "extra_rows": 0,
+        "worst": []
+      },
+      "rfi_slot": {
+        "label": "RFI slot collision (reconstructed_frame_index, frame_buffer_count)",
+        "total_rows": 651909,
+        "duplicate_groups": 40,
+        "extra_rows": 40,
+        "worst": [
+          {
+            "reconstructed_frame_index": 1854,
+            "frame_buffer_count": 3,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 10418,
+            "frame_buffer_count": 2,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 47933,
+            "frame_buffer_count": 3,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 47967,
+            "frame_buffer_count": 3,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 48827,
+            "frame_buffer_count": 3,
+            "0": 2
+          }
+        ]
+      },
+      "fn_slot": {
+        "label": "frame_num slot collision (frame_num, buffer_count) [sentinels filtered]",
+        "total_rows": 651892,
+        "duplicate_groups": 59,
+        "extra_rows": 59,
+        "worst": [
+          {
+            "frame_num": 2206,
+            "buffer_count": 17651,
+            "0": 2
+          },
+          {
+            "frame_num": 48906,
+            "buffer_count": 391251,
+            "0": 2
+          },
+          {
+            "frame_num": 46510,
+            "buffer_count": 372083,
+            "0": 2
+          },
+          {
+            "frame_num": 47490,
+            "buffer_count": 379923,
+            "0": 2
+          },
+          {
+            "frame_num": 48058,
+            "buffer_count": 384467,
+            "0": 2
+          }
+        ]
+      }
+    },
+    {
+      "daq": "DAQ2",
+      "stem": "long-7",
+      "csv": "WL27_DAQ2_25_12_10_long-7.csv",
+      "n_rows": 653198,
+      "exact": {
+        "label": "exact metadata match (frame_num, buffer_count, timestamp, write_timestamp, recv_time)",
+        "total_rows": 653198,
+        "duplicate_groups": 0,
+        "extra_rows": 0,
+        "worst": []
+      },
+      "rfi_slot": {
+        "label": "RFI slot collision (reconstructed_frame_index, frame_buffer_count)",
+        "total_rows": 653198,
+        "duplicate_groups": 0,
+        "extra_rows": 0,
+        "worst": []
+      },
+      "fn_slot": {
+        "label": "frame_num slot collision (frame_num, buffer_count) [sentinels filtered]",
+        "total_rows": 653198,
+        "duplicate_groups": 0,
+        "extra_rows": 0,
+        "worst": []
+      }
+    },
+    {
+      "daq": "DAQ1",
+      "stem": "long-10",
+      "csv": "WL27_DAQ1_25_12_10_long-10.csv",
+      "n_rows": 641440,
+      "exact": {
+        "label": "exact metadata match (frame_num, buffer_count, timestamp, write_timestamp, recv_time)",
+        "total_rows": 641440,
+        "duplicate_groups": 0,
+        "extra_rows": 0,
+        "worst": []
+      },
+      "rfi_slot": {
+        "label": "RFI slot collision (reconstructed_frame_index, frame_buffer_count)",
+        "total_rows": 641440,
+        "duplicate_groups": 16,
+        "extra_rows": 16,
+        "worst": [
+          {
+            "reconstructed_frame_index": 49245,
+            "frame_buffer_count": 3,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 69443,
+            "frame_buffer_count": 3,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 69445,
+            "frame_buffer_count": 3,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 69459,
+            "frame_buffer_count": 3,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 69469,
+            "frame_buffer_count": 3,
+            "0": 2
+          }
+        ]
+      },
+      "fn_slot": {
+        "label": "frame_num slot collision (frame_num, buffer_count) [sentinels filtered]",
+        "total_rows": 641435,
+        "duplicate_groups": 24,
+        "extra_rows": 24,
+        "worst": [
+          {
+            "frame_num": 401,
+            "buffer_count": 3208,
+            "0": 2
+          },
+          {
+            "frame_num": 1696,
+            "buffer_count": 13570,
+            "0": 2
+          },
+          {
+            "frame_num": 71490,
+            "buffer_count": 571923,
+            "0": 2
+          },
+          {
+            "frame_num": 70446,
+            "buffer_count": 563571,
+            "0": 2
+          },
+          {
+            "frame_num": 69644,
+            "buffer_count": 557155,
+            "0": 2
+          }
+        ]
+      }
+    },
+    {
+      "daq": "DAQ2",
+      "stem": "long-8",
+      "csv": "WL27_DAQ2_25_12_10_long-8.csv",
+      "n_rows": 642279,
+      "exact": {
+        "label": "exact metadata match (frame_num, buffer_count, timestamp, write_timestamp, recv_time)",
+        "total_rows": 642279,
+        "duplicate_groups": 0,
+        "extra_rows": 0,
+        "worst": []
+      },
+      "rfi_slot": {
+        "label": "RFI slot collision (reconstructed_frame_index, frame_buffer_count)",
+        "total_rows": 642279,
+        "duplicate_groups": 0,
+        "extra_rows": 0,
+        "worst": []
+      },
+      "fn_slot": {
+        "label": "frame_num slot collision (frame_num, buffer_count) [sentinels filtered]",
+        "total_rows": 642279,
+        "duplicate_groups": 0,
+        "extra_rows": 0,
+        "worst": []
+      }
+    },
+    {
+      "daq": "DAQ1",
+      "stem": "long-12",
+      "csv": "WL27_DAQ1_25_12_10_long-12.csv",
+      "n_rows": 648212,
+      "exact": {
+        "label": "exact metadata match (frame_num, buffer_count, timestamp, write_timestamp, recv_time)",
+        "total_rows": 648212,
+        "duplicate_groups": 0,
+        "extra_rows": 0,
+        "worst": []
+      },
+      "rfi_slot": {
+        "label": "RFI slot collision (reconstructed_frame_index, frame_buffer_count)",
+        "total_rows": 648212,
+        "duplicate_groups": 21,
+        "extra_rows": 21,
+        "worst": [
+          {
+            "reconstructed_frame_index": 8576,
+            "frame_buffer_count": 0,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 62651,
+            "frame_buffer_count": 2,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 75405,
+            "frame_buffer_count": 3,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 75367,
+            "frame_buffer_count": 3,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 75253,
+            "frame_buffer_count": 3,
+            "0": 2
+          }
+        ]
+      },
+      "fn_slot": {
+        "label": "frame_num slot collision (frame_num, buffer_count) [sentinels filtered]",
+        "total_rows": 648200,
+        "duplicate_groups": 43,
+        "extra_rows": 43,
+        "worst": [
+          {
+            "frame_num": 906,
+            "buffer_count": 7252,
+            "0": 2
+          },
+          {
+            "frame_num": 50260,
+            "buffer_count": 402083,
+            "0": 2
+          },
+          {
+            "frame_num": 40204,
+            "buffer_count": 321634,
+            "0": 2
+          },
+          {
+            "frame_num": 40973,
+            "buffer_count": 327784,
+            "0": 2
+          },
+          {
+            "frame_num": 47129,
+            "buffer_count": 377032,
+            "0": 2
+          }
+        ]
+      }
+    },
+    {
+      "daq": "DAQ2",
+      "stem": "long-9",
+      "csv": "WL27_DAQ2_25_12_10_long-9.csv",
+      "n_rows": 649967,
+      "exact": {
+        "label": "exact metadata match (frame_num, buffer_count, timestamp, write_timestamp, recv_time)",
+        "total_rows": 649967,
+        "duplicate_groups": 0,
+        "extra_rows": 0,
+        "worst": []
+      },
+      "rfi_slot": {
+        "label": "RFI slot collision (reconstructed_frame_index, frame_buffer_count)",
+        "total_rows": 649967,
+        "duplicate_groups": 1,
+        "extra_rows": 1,
+        "worst": [
+          {
+            "reconstructed_frame_index": 2230,
+            "frame_buffer_count": 3,
+            "0": 2
+          }
+        ]
+      },
+      "fn_slot": {
+        "label": "frame_num slot collision (frame_num, buffer_count) [sentinels filtered]",
+        "total_rows": 649966,
+        "duplicate_groups": 0,
+        "extra_rows": 0,
+        "worst": []
+      }
+    },
+    {
+      "daq": "DAQ1",
+      "stem": "long-13",
+      "csv": "WL27_DAQ1_25_12_10_long-13.csv",
+      "n_rows": 620290,
+      "exact": {
+        "label": "exact metadata match (frame_num, buffer_count, timestamp, write_timestamp, recv_time)",
+        "total_rows": 620290,
+        "duplicate_groups": 0,
+        "extra_rows": 0,
+        "worst": []
+      },
+      "rfi_slot": {
+        "label": "RFI slot collision (reconstructed_frame_index, frame_buffer_count)",
+        "total_rows": 620290,
+        "duplicate_groups": 19,
+        "extra_rows": 19,
+        "worst": [
+          {
+            "reconstructed_frame_index": 8985,
+            "frame_buffer_count": 2,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 13362,
+            "frame_buffer_count": 0,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 75920,
+            "frame_buffer_count": 3,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 75780,
+            "frame_buffer_count": 3,
+            "0": 2
+          },
+          {
+            "reconstructed_frame_index": 62994,
+            "frame_buffer_count": 2,
+            "0": 2
+          }
+        ]
+      },
+      "fn_slot": {
+        "label": "frame_num slot collision (frame_num, buffer_count) [sentinels filtered]",
+        "total_rows": 620285,
+        "duplicate_groups": 48,
+        "extra_rows": 48,
+        "worst": [
+          {
+            "frame_num": 801,
+            "buffer_count": 6410,
+            "0": 2
+          },
+          {
+            "frame_num": 3345,
+            "buffer_count": 26762,
+            "0": 2
+          },
+          {
+            "frame_num": 36261,
+            "buffer_count": 290088,
+            "0": 2
+          },
+          {
+            "frame_num": 38541,
+            "buffer_count": 308331,
+            "0": 2
+          },
+          {
+            "frame_num": 40132,
+            "buffer_count": 321058,
+            "0": 2
+          }
+        ]
+      }
+    },
+    {
+      "daq": "DAQ2",
+      "stem": "long-10",
+      "csv": "WL27_DAQ2_25_12_10_long-10.csv",
+      "n_rows": 623072,
+      "exact": {
+        "label": "exact metadata match (frame_num, buffer_count, timestamp, write_timestamp, recv_time)",
+        "total_rows": 623072,
+        "duplicate_groups": 0,
+        "extra_rows": 0,
+        "worst": []
+      },
+      "rfi_slot": {
+        "label": "RFI slot collision (reconstructed_frame_index, frame_buffer_count)",
+        "total_rows": 623072,
+        "duplicate_groups": 0,
+        "extra_rows": 0,
+        "worst": []
+      },
+      "fn_slot": {
+        "label": "frame_num slot collision (frame_num, buffer_count) [sentinels filtered]",
+        "total_rows": 623072,
+        "duplicate_groups": 0,
+        "extra_rows": 0,
+        "worst": []
+      }
+    }
+  ],
+  "totals": {
+    "DAQ1": {
+      "n_chunks": 8,
+      "n_rows": 5108546,
+      "exact": {
+        "duplicate_groups": 0,
+        "extra_rows": 0
+      },
+      "rfi_slot": {
+        "duplicate_groups": 226,
+        "extra_rows": 226
+      },
+      "fn_slot": {
+        "duplicate_groups": 358,
+        "extra_rows": 358
+      }
+    },
+    "DAQ2": {
+      "n_chunks": 8,
+      "n_rows": 5129481,
+      "exact": {
+        "duplicate_groups": 0,
+        "extra_rows": 0
+      },
+      "rfi_slot": {
+        "duplicate_groups": 26,
+        "extra_rows": 26
+      },
+      "fn_slot": {
+        "duplicate_groups": 4,
+        "extra_rows": 4
+      }
+    }
+  }
+}
