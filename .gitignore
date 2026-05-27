@@ -17,6 +17,9 @@ __pycache__/
 # Claude Code local settings
 .claude/
 
+# Local planning docs (kept out of public repo)
+docs/superpowers/
+
 # Screenshots (not part of the pipeline)
 Screenshot*.png
 
