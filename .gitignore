@@ -7,6 +7,9 @@
 # Raw binary data files
 *.bin
 
+# Regenerable numpy caches (e.g. battery_voltage_timeline.npz)
+*.npz
+
 # macOS
 .DS_Store
 
