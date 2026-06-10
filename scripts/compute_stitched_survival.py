@@ -1,249 +1,237 @@
 #!/usr/bin/env python3
-"""Join stitched timestamps to per-RFI survival to get stitched-track survival.
+"""Dual-DAQ stitched survival via direct MCU frame_num union (honest method).
 
-Input:
-  output/WL27_stitched_timestamps.csv  (645,790 rows; one per stitched output frame)
-    columns: stitched_frame, chunk, chunk_frame, unix_time, source, segment,
-             daq1_frame, daq2_frame, daq1_broken, daq2_broken
-  output/rfi_survival_all.csv          (per-RFI survival across all DAQ1/DAQ2 chunks)
-    columns: daq, segment, reconstructed_frame_index, n_buffers, fn_mode,
-             surviving_ge8, surviving_ge7, surviving_ge6, trimmed
+WHY THIS REPLACES THE OLD JOIN
+------------------------------
+The previous version joined the stitcher's per-frame `daq1_frame`/`daq2_frame`
+columns to per-RFI survival. Those columns can only reference frames that WERE
+reconstructed, so frames lost on a DAQ have no RFI and are simply ABSENT from
+the stitched denominator instead of being counted as lost. That made the
+stitched loss collapse to ~0.00% — right by luck, wrong by construction (the
+join found only 162 DAQ2 failures vs the true 2,475).
 
-Output:
-  output/WL27_stitched_survival.csv
-    original stitched columns + MCU-level and RFI-level survival flags for both
-    DAQs, the stitched (picked-source) flag, and either/neither-survived flags
-  output/survival_rate_stitched.json
-    MCU-level (headline) and RFI-level (diagnostic) summaries, with per-chunk
-    and per-source (DAQ1 vs DAQ2 — which did the stitcher pick) breakdowns
+CORRECT METHOD (verified 2026-06-09)
+------------------------------------
+The device MCU `frame_num` is the SAME counter on both DAQs within a paired
+recording chunk (it resets per chunk). Alignment is exact: surviving-frame sets
+overlap 77,315/77,317 in the worst pair, and the same frame_num arrives within
+~4 ms on both DAQs. So we align DAQ1↔DAQ2 directly by frame_num:
 
-Two survival flavors (both recorded; MCU-level is the publication headline):
-  MCU-level: the MCU frame the stitcher wrote DID get reconstructed somewhere
-             on that DAQ (some RFI for that fn_mode had ≥N buffers). Honest
-             answer to "did this frame make it across the wireless link."
-  RFI-level: the specific RFI the stitcher wrote had ≥N buffers. Stricter —
-             catches cases where the stitcher picked a short fragment even
-             when a full RFI existed for the same MCU frame.
+  S1 = {frame_num that survived (>=8 buffers) on DAQ1}
+  S2 = {frame_num that survived on DAQ2}
+  stitched-covered = S1 ∪ S2 ;  both-lost = frames in neither set.
 
-Stitched-survival logic (per stitched frame):
-  - If source == "DAQ1": stitched_survived = daq1_survived
-  - If source == "DAQ2": stitched_survived = daq2_survived
+Data-driven tail handling (no magic trim constants)
+---------------------------------------------------
+Each chunk is a SEPARATE recording session (frame_num resets; 26–574 s wall-
+clock gaps between chunks). At every session end BOTH optical links collapse to
+half-buffer delivery (meanbuf ≈4 of 8, survival 0%) for the final seconds —
+buffers in flight when acquisition stops, not data loss. We exclude this
+terminal collapse principledly: the analyzable span for each pair runs from the
+FIRST to the LAST frame that EITHER DAQ delivered. Frames after the last
+delivered frame (the terminal collapse) are outside the span; both-lost frames
+INSIDE the span are genuine mid-recording simultaneous dropouts.
 
-Segment-to-DAQ2-label mapping: same PAIRS as analyze_frame_num_drops.py.
+Inputs:
+  output/rfi_survival_all.csv   — per-RFI survival (daq, segment, fn_mode,
+                                   mcu_surviving_ge8, ...)
+  neural_DAQ{1,2}/*.csv         — raw buffers, for both-lost frame timestamps
+  PAIRS                         — canonical DAQ1↔DAQ2 chunk mapping (afd)
 
-Denominator: the stitched output's total frame count (per-stitched-frame loss
-rate — matches the old metric's denominator).
+All three headline numbers (DAQ1 alone, DAQ2 alone, dual-DAQ stitched) are
+computed over the SAME per-pair span, so they share one principled session-end
+boundary instead of the old hand-tuned, DAQ1-only `TRIM_SECONDS_DAQ1`. Per pair:
+  DAQ1-alone lost = frames in [lo, hi] not in S1
+  DAQ2-alone lost = frames in [lo, hi] not in S2
+  stitched lost   = frames in [lo, hi] in neither (both-lost)
+with [lo, hi] = first..last frame either DAQ delivered.
+
+Outputs:
+  output/survival_summary.json  — DAQ1/DAQ2/stitched totals + per-pair breakdown
+  output/stitched_both_lost.csv — one row per dual-DAQ both-lost frame
+                                  (for the timeline panel)
 """
 
 import json
 import os
 import sys
 
+import numpy as np
 import pandas as pd
 
 sys.path.insert(0, os.path.dirname(__file__))
 import analyze_frame_num_drops as afd
 
-BASE = "/Users/mbrosch/Documents/9h_long_recording_December2025"
+# ── Paths ──
+BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT_DIR = f"{BASE}/output"
-STITCHED_TS = f"{OUT_DIR}/WL27_stitched_timestamps.csv"
+DAQ1_DIR = f"{BASE}/neural_DAQ1"
+DAQ2_DIR = f"{BASE}/neural_DAQ2"
 RFI_SURVIVAL = f"{OUT_DIR}/rfi_survival_all.csv"
 
-OUT_CSV = f"{OUT_DIR}/WL27_stitched_survival.csv"
-OUT_JSON = f"{OUT_DIR}/survival_rate_stitched.json"
+OUT_JSON = f"{OUT_DIR}/survival_summary.json"
+OUT_CSV = f"{OUT_DIR}/stitched_both_lost.csv"
 
-THRESHOLDS = [8, 7]
-
-
-def _segment_to_daq2_label():
-    """Map DAQ1 segment label → DAQ2 label using PAIRS."""
-    return {p[0]: p[1] for p in afd.PAIRS}
+SURVIVAL_THRESHOLD = 8  # buffers required for a frame to count as delivered
 
 
-def _summarize(df, group_col=None):
-    out = {}
-    if group_col is None:
-        groups = [("", df)]
-    else:
-        groups = list(df.groupby(group_col))
-    for key, g in groups:
-        row = {"total": int(len(g))}
-        for flavor in ("mcu", "rfi"):
-            for th in THRESHOLDS:
-                surv = int(g[f"stitched_{flavor}_ge{th}"].sum())
-                lost = int(len(g) - surv)
-                row[f"stitched_surviving_{flavor}_ge{th}"] = surv
-                row[f"stitched_lost_{flavor}_ge{th}"] = lost
-                row[f"stitched_loss_pct_{flavor}_ge{th}"] = round(
-                    100.0 * lost / len(g), 4
-                ) if len(g) else None
-                either = int(g[f"either_{flavor}_ge{th}"].sum())
-                neither = int(len(g) - either)
-                row[f"either_{flavor}_ge{th}"] = either
-                row[f"neither_{flavor}_ge{th}"] = neither
-                row[f"neither_loss_pct_{flavor}_ge{th}"] = round(
-                    100.0 * neither / len(g), 4
-                ) if len(g) else None
-        out[str(key) if key != "" else "all"] = row
-    return out
+# ── Survival sets ──
+def surviving_frame_nums(rs: pd.DataFrame, daq: int, segment: str) -> set[int]:
+    """Set of MCU frame_num values that survived (>=8 buffers) on this chunk."""
+    g = rs[(rs["daq"] == daq) & (rs["segment"] == segment)]
+    return set(g.loc[g["mcu_surviving_ge8"], "fn_mode"].astype(int))
 
 
-def run():
-    print(f"Loading stitched timestamps: {STITCHED_TS}")
-    st = pd.read_csv(STITCHED_TS)
-    print(f"  {len(st):,} rows")
+def delivering_span_both_lost(s1: set[int], s2: set[int]) -> tuple[int, int, list[int]]:
+    """Return (lo, hi, both_lost) for the union-coverage span.
 
+    lo/hi are the first/last frame_num delivered by EITHER DAQ; both_lost is the
+    sorted list of frame_nums inside [lo, hi] that neither DAQ delivered.
+    """
+    union = s1 | s2
+    if not union:
+        return 0, -1, []
+    lo, hi = min(union), max(union)
+    both_lost = sorted(set(range(lo, hi + 1)) - union)
+    return lo, hi, both_lost
+
+
+# ── Timestamps for both-lost frames (for the timeline panel) ──
+def frame_timestamps(csv_path: str, frame_nums: set[int]) -> pd.Series:
+    """Min buffer_recv_unix_time for each requested frame_num in a raw CSV.
+
+    Both-lost frames are present sub-threshold (some buffers arrived), so their
+    arrival time is recoverable from the raw rows. Returns an empty Series if
+    none of the frame_nums appear.
+    """
+    if not frame_nums:
+        return pd.Series(dtype=float)
+    df = pd.read_csv(csv_path, usecols=["frame_num", "buffer_recv_unix_time"])
+    hit = df[df["frame_num"].isin(frame_nums)]
+    if len(hit) == 0:
+        return pd.Series(dtype=float)
+    return hit.groupby("frame_num")["buffer_recv_unix_time"].min()
+
+
+def both_lost_timestamps(
+    d1_seg: str, d2_seg: str, both_lost: list[int]
+) -> dict[int, float]:
+    """Map each both-lost frame_num → earliest arrival time across both DAQs."""
+    if not both_lost:
+        return {}
+    want = set(both_lost)
+    ts = {}
+    d1_csv = afd.find_csv(DAQ1_DIR, d1_seg)
+    d2_csv = afd.find_csv(DAQ2_DIR, d2_seg)
+    for csv in (d1_csv, d2_csv):
+        if csv is None:
+            continue
+        s = frame_timestamps(csv, want)
+        for fn, t in s.items():
+            fn = int(fn)
+            ts[fn] = min(t, ts[fn]) if fn in ts else float(t)
+    # Interior frames almost always appear sub-threshold; if a frame truly never
+    # arrived on either DAQ, interpolate its time linearly within the pair.
+    missing = [fn for fn in both_lost if fn not in ts]
+    if missing and ts:
+        known_fn = np.array(sorted(ts))
+        known_t = np.array([ts[fn] for fn in known_fn])
+        for fn in missing:
+            ts[fn] = float(np.interp(fn, known_fn, known_t))
+    return ts
+
+
+# ── Driver ──
+def run() -> None:
     print(f"Loading per-RFI survival: {RFI_SURVIVAL}")
     rs = pd.read_csv(RFI_SURVIVAL)
-    print(f"  {len(rs):,} rows")
+    print(f"  {len(rs):,} rows\n")
 
-    seg2daq2 = _segment_to_daq2_label()
+    per_pair = {}
+    rows = []
+    total_span = 0
+    total_daq1 = 0
+    total_daq2 = 0
+    total_both = 0
 
-    # Split rfi_survival into DAQ1 and DAQ2 tables, keyed by (segment, RFI).
-    rfi_cols = [
-        "segment", "reconstructed_frame_index",
-        "surviving_ge8", "surviving_ge7",
-        "mcu_surviving_ge8", "mcu_surviving_ge7",
-    ]
-    rs_daq1 = rs[rs["daq"] == 1][rfi_cols].rename(columns={
-        "surviving_ge8": "daq1_rfi_ge8",
-        "surviving_ge7": "daq1_rfi_ge7",
-        "mcu_surviving_ge8": "daq1_mcu_ge8",
-        "mcu_surviving_ge7": "daq1_mcu_ge7",
-    })
-    rs_daq2 = rs[rs["daq"] == 2][rfi_cols].rename(columns={
-        "surviving_ge8": "daq2_rfi_ge8",
-        "surviving_ge7": "daq2_rfi_ge7",
-        "mcu_surviving_ge8": "daq2_mcu_ge8",
-        "mcu_surviving_ge7": "daq2_mcu_ge7",
-        "segment": "daq2_segment",
-    })
+    print("Per-pair survival over the shared union span (aligned by frame_num):\n")
+    for d1_seg, d2_seg in afd.PAIRS:
+        s1 = surviving_frame_nums(rs, 1, d1_seg)
+        s2 = surviving_frame_nums(rs, 2, d2_seg)
+        lo, hi, both_lost = delivering_span_both_lost(s1, s2)
+        if hi < lo:
+            continue
+        span = hi - lo + 1
+        full = set(range(lo, hi + 1))
+        daq1_lost = sorted(full - s1)  # DAQ1-alone failures within the span
+        daq2_lost = sorted(full - s2)  # DAQ2-alone failures within the span
 
-    # Join DAQ1: (segment, daq1_frame) → daq1_survived_*
-    st = st.merge(
-        rs_daq1,
-        left_on=["segment", "daq1_frame"],
-        right_on=["segment", "reconstructed_frame_index"],
-        how="left",
-    ).drop(columns=["reconstructed_frame_index"])
+        total_span += span
+        total_daq1 += len(daq1_lost)
+        total_daq2 += len(daq2_lost)
+        total_both += len(both_lost)
 
-    # Join DAQ2: (daq2_segment, daq2_frame) → daq2_survived_*
-    st["daq2_segment"] = st["segment"].map(seg2daq2)
-    st = st.merge(
-        rs_daq2,
-        left_on=["daq2_segment", "daq2_frame"],
-        right_on=["daq2_segment", "reconstructed_frame_index"],
-        how="left",
-    ).drop(columns=["reconstructed_frame_index", "daq2_segment"])
+        pair_key = f"{d1_seg}|{d2_seg}"
+        per_pair[pair_key] = {
+            "daq1_segment": d1_seg,
+            "daq2_segment": d2_seg,
+            "span_first_fn": lo,
+            "span_last_fn": hi,
+            "analyzed_frames": span,
+            "daq1_lost": len(daq1_lost),
+            "daq2_lost": len(daq2_lost),
+            "both_lost": len(both_lost),
+        }
+        print(
+            f"  {d1_seg:7s}↔{d2_seg:7s} span={span:,} (fn {lo}-{hi})  "
+            f"DAQ1={len(daq1_lost):,} DAQ2={len(daq2_lost):,} both={len(both_lost):,}"
+        )
 
-    # Flag stitched rows whose picked RFI doesn't exist in rfi_survival_all.
-    # Happens when the stitcher ran on a slightly different DAQ CSV/AVI generation
-    # than the current survival analysis (a few thousand tail RFIs in some
-    # chunks). We record it so the headline stats can be reported with or
-    # without these "unknown" rows.
-    st["daq1_rfi_in_table"] = st["daq1_rfi_ge8"].notna()
-    st["daq2_rfi_in_table"] = st["daq2_rfi_ge8"].notna()
-
-    flavor_cols = []
-    for flavor in ("rfi", "mcu"):
-        for th in THRESHOLDS:
-            flavor_cols += [f"daq1_{flavor}_ge{th}", f"daq2_{flavor}_ge{th}"]
-    for col in flavor_cols:
-        st[col] = st[col].fillna(False).astype(bool)
-
-    # Stitched survival = the picked source's flag (for each flavor × threshold)
-    picked = st["source"].where(st["source"].isin(["DAQ1", "DAQ2"]))
-    picked_in_table = (
-        ((picked == "DAQ1") & st["daq1_rfi_in_table"]) |
-        ((picked == "DAQ2") & st["daq2_rfi_in_table"])
-    )
-    st["picked_in_table"] = picked_in_table
-    for flavor in ("rfi", "mcu"):
-        for th in THRESHOLDS:
-            st[f"stitched_{flavor}_ge{th}"] = (
-                ((picked == "DAQ1") & st[f"daq1_{flavor}_ge{th}"]) |
-                ((picked == "DAQ2") & st[f"daq2_{flavor}_ge{th}"])
-            )
-            st[f"either_{flavor}_ge{th}"] = (
-                st[f"daq1_{flavor}_ge{th}"] | st[f"daq2_{flavor}_ge{th}"]
+        ts = both_lost_timestamps(d1_seg, d2_seg, both_lost)
+        for fn in both_lost:
+            rows.append(
+                {
+                    "daq1_segment": d1_seg,
+                    "daq2_segment": d2_seg,
+                    "frame_num": fn,
+                    "unix_time": ts.get(fn, np.nan),
+                }
             )
 
-    st.to_csv(OUT_CSV, index=False)
-    print(f"\nWrote {OUT_CSV} ({len(st):,} rows)")
+    both_lost_df = pd.DataFrame(rows)
+    both_lost_df.to_csv(OUT_CSV, index=False)
 
-    # Summaries — headline uses only rows whose picked RFI is in our survival
-    # table (picked_in_table=True), because "unknown" rows are not actually
-    # counted as lost on their source DAQ — they live outside our analysis.
-    st_known = st[st["picked_in_table"]]
+    def pct(n: int) -> float | None:
+        return round(100.0 * n / total_span, 4) if total_span else None
 
     summary = {
-        "source_csv": os.path.basename(STITCHED_TS),
-        "thresholds": THRESHOLDS,
-        "logic": "stitched_survived = the picked source's survival flag",
-        "note_unknown_rows": (
-            "picked_in_table=False rows reference RFIs not in rfi_survival_all "
-            "(stitcher's AVI had more tail frames than the current CSVs can "
-            "reconstruct). Headline stats exclude them."
+        "method": (
+            "Direct DAQ1↔DAQ2 alignment by MCU frame_num. Per chunk pair the "
+            "analysable span is [first, last] frame delivered by EITHER DAQ "
+            "(excludes the terminal MCU-reboot collapse). Over that span: DAQ1/DAQ2 "
+            "alone lost = frames that DAQ didn't survive (>=8 buffers); stitched "
+            "both-lost = frames neither survived. One boundary for all three."
         ),
-        "total_stitched_rows": int(len(st)),
-        "total_unknown_rows": int((~st["picked_in_table"]).sum()),
-        "all": _summarize(st_known)["all"],
-        "per_chunk": _summarize(st_known, group_col="chunk"),
-        "per_source": _summarize(st_known, group_col="source"),
-        "all_including_unknown": _summarize(st)["all"],
+        "threshold_buffers": SURVIVAL_THRESHOLD,
+        "totals": {
+            "analyzed_frames": total_span,
+            "DAQ1": {"lost": total_daq1, "loss_pct": pct(total_daq1)},
+            "DAQ2": {"lost": total_daq2, "loss_pct": pct(total_daq2)},
+            "stitched_both_lost": {"lost": total_both, "loss_pct": pct(total_both)},
+        },
+        "per_pair": per_pair,
     }
-
-    # Cross-check: for rows where both daq1_broken==0 and daq2_broken==0
-    # (old-metric good frames), how many fail the new MCU-level survival?
-    # Restrict to rows where the picked RFI was in our table — otherwise the
-    # mismatch is just "we don't have data" not "actually broken".
-    old_good = st_known[(st_known["daq1_broken"] == 0) & (st_known["daq2_broken"] == 0)]
-    mismatch_mcu = old_good[~old_good["stitched_mcu_ge8"]]
-    mismatch_rfi = old_good[~old_good["stitched_rfi_ge8"]]
-    summary["cross_check_old_good_but_new_lost"] = {
-        "old_good_frames": int(len(old_good)),
-        "new_lost_among_them_mcu": int(len(mismatch_mcu)),
-        "new_lost_among_them_rfi": int(len(mismatch_rfi)),
-        "mismatch_pct_of_old_good_mcu": round(
-            100.0 * len(mismatch_mcu) / len(old_good), 4
-        ) if len(old_good) else None,
-        "mismatch_pct_of_old_good_rfi": round(
-            100.0 * len(mismatch_rfi) / len(old_good), 4
-        ) if len(old_good) else None,
-    }
-
     with open(OUT_JSON, "w") as f:
         json.dump(summary, f, indent=2)
+
+    print(f"\nWrote {OUT_CSV} ({len(both_lost_df):,} both-lost frames)")
     print(f"Wrote {OUT_JSON}")
-
     print(f"\n{'=' * 70}")
-    print("Stitched-track survival (per-stitched-frame):")
+    print(f"Consistent session-end cut — totals over {total_span:,} analysed frames:")
+    print(f"  DAQ1 alone:        {total_daq1:,}  ({pct(total_daq1)}%)")
+    print(f"  DAQ2 alone:        {total_daq2:,}  ({pct(total_daq2)}%)")
+    print(f"  Dual-DAQ stitched: {total_both:,}  ({pct(total_both)}%)")
     print(f"{'=' * 70}")
-    a = summary["all"]
-    tot = summary["total_stitched_rows"]
-    unk = summary["total_unknown_rows"]
-    print(f"  total stitched frames:              {tot:,}")
-    print(f"  unknown (picked RFI not in table):  {unk:,}  — excluded from headline")
-    print(f"  analyzable rows:                    {a['total']:,}")
-    print(f"  MCU-level surviving (≥8):           {a['stitched_surviving_mcu_ge8']:,}  "
-          f"(loss {a['stitched_loss_pct_mcu_ge8']}%)   ← headline")
-    print(f"  RFI-level surviving (≥8):           {a['stitched_surviving_rfi_ge8']:,}  "
-          f"(loss {a['stitched_loss_pct_rfi_ge8']}%)   [stricter: specific picked RFI]")
-    print(f"  neither DAQ survived MCU (≥8):      {a['neither_mcu_ge8']:,} "
-          f"({a['neither_loss_pct_mcu_ge8']}%)   ← new equivalent of old 0.20% "
-          f"both-broken rate")
-    print(f"\nPer-source (which DAQ the stitcher picked):")
-    for src, row in summary["per_source"].items():
-        print(f"  {src}: picked {row['total']:,}  "
-              f"MCU loss(≥8)={row['stitched_loss_pct_mcu_ge8']}%  "
-              f"RFI loss(≥8)={row['stitched_loss_pct_rfi_ge8']}%")
-
-    cc = summary["cross_check_old_good_but_new_lost"]
-    print(f"\nCross-check: old-metric good frames ({cc['old_good_frames']:,}) "
-          f"that fail new survival: MCU={cc['new_lost_among_them_mcu']:,} "
-          f"({cc['mismatch_pct_of_old_good_mcu']}%)  "
-          f"RFI={cc['new_lost_among_them_rfi']:,} "
-          f"({cc['mismatch_pct_of_old_good_rfi']}%)")
 
 
 if __name__ == "__main__":

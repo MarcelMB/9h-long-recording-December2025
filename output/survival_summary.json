@@ -1,0 +1,101 @@
+{
+  "method": "Direct DAQ1\u2194DAQ2 alignment by MCU frame_num. Per chunk pair the analysable span is [first, last] frame delivered by EITHER DAQ (excludes the terminal MCU-reboot collapse). Over that span: DAQ1/DAQ2 alone lost = frames that DAQ didn't survive (>=8 buffers); stitched both-lost = frames neither survived. One boundary for all three.",
+  "threshold_buffers": 8,
+  "totals": {
+    "analyzed_frames": 639197,
+    "DAQ1": {
+      "lost": 22359,
+      "loss_pct": 3.498
+    },
+    "DAQ2": {
+      "lost": 901,
+      "loss_pct": 0.141
+    },
+    "stitched_both_lost": {
+      "lost": 45,
+      "loss_pct": 0.007
+    }
+  },
+  "per_pair": {
+    "long-2|long": {
+      "daq1_segment": "long-2",
+      "daq2_segment": "long",
+      "span_first_fn": 1185,
+      "span_last_fn": 80643,
+      "analyzed_frames": 79459,
+      "daq1_lost": 2565,
+      "daq2_lost": 12,
+      "both_lost": 1
+    },
+    "long-4|long-2": {
+      "daq1_segment": "long-4",
+      "daq2_segment": "long-2",
+      "span_first_fn": 695,
+      "span_last_fn": 79410,
+      "analyzed_frames": 78716,
+      "daq1_lost": 3448,
+      "daq2_lost": 167,
+      "both_lost": 1
+    },
+    "long-6|long-4": {
+      "daq1_segment": "long-6",
+      "daq2_segment": "long-4",
+      "span_first_fn": 629,
+      "span_last_fn": 76072,
+      "analyzed_frames": 75444,
+      "daq1_lost": 3019,
+      "daq2_lost": 213,
+      "both_lost": 31
+    },
+    "long-8|long-6": {
+      "daq1_segment": "long-8",
+      "daq2_segment": "long-6",
+      "span_first_fn": 318,
+      "span_last_fn": 86144,
+      "analyzed_frames": 85827,
+      "daq1_lost": 2460,
+      "daq2_lost": 183,
+      "both_lost": 2
+    },
+    "long-9|long-7": {
+      "daq1_segment": "long-9",
+      "daq2_segment": "long-7",
+      "span_first_fn": 405,
+      "span_last_fn": 80643,
+      "analyzed_frames": 80239,
+      "daq1_lost": 2818,
+      "daq2_lost": 109,
+      "both_lost": 3
+    },
+    "long-10|long-8": {
+      "daq1_segment": "long-10",
+      "daq2_segment": "long-8",
+      "span_first_fn": 386,
+      "span_last_fn": 80643,
+      "analyzed_frames": 80258,
+      "daq1_lost": 1547,
+      "daq2_lost": 90,
+      "both_lost": 4
+    },
+    "long-12|long-9": {
+      "daq1_segment": "long-12",
+      "daq2_segment": "long-9",
+      "span_first_fn": 498,
+      "span_last_fn": 81843,
+      "analyzed_frames": 81346,
+      "daq1_lost": 2897,
+      "daq2_lost": 102,
+      "both_lost": 0
+    },
+    "long-13|long-10": {
+      "daq1_segment": "long-13",
+      "daq2_segment": "long-10",
+      "span_first_fn": 447,
+      "span_last_fn": 78354,
+      "analyzed_frames": 77908,
+      "daq1_lost": 3605,
+      "daq2_lost": 25,
+      "both_lost": 3
+    }
+  }
+}

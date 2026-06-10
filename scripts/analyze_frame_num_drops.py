@@ -48,13 +48,19 @@ OUTPUT_DIR = os.path.join(BASE_DIR, "output")
 
 FPS = 20.0
 
-# Matches analyze_silent_drops.py PAIRS exactly for apples-to-apples comparison
+# DAQ1 chunk label -> time-aligned DAQ2 chunk label.
+# DAQ2's first chunk is the un-numbered base file (...long.csv), so the DAQ2
+# numbering runs one behind DAQ1. Alignment confirmed by both
+# buffer_recv_unix_time windows and frame_num ranges, and matches the
+# timestamp-based mapping in combine_daqs.py. (Earlier versions had the first
+# four DAQ2 labels shifted by one, which skipped DAQ2's first hour and
+# double-counted long-8.)
 PAIRS = [
-    ("long-2",  "long-2"),
-    ("long-4",  "long-4"),
-    ("long-6",  "long-6"),
-    ("long-8",  "long-8"),
-    ("long-9",  "long-7"),
+    ("long-2", "long"),
+    ("long-4", "long-2"),
+    ("long-6", "long-4"),
+    ("long-8", "long-6"),
+    ("long-9", "long-7"),
     ("long-10", "long-8"),
     ("long-12", "long-9"),
     ("long-13", "long-10"),
@@ -265,7 +271,9 @@ def plot_summary(summary, out_path):
             continue
         labels = [r["file"].replace(".csv", "") for r in rows]
         x = np.arange(len(labels))
-        drops = [r["silent_drops"] if r["silent_drops"] is not None else 0 for r in rows]
+        drops = [
+            r["silent_drops"] if r["silent_drops"] is not None else 0 for r in rows
+        ]
         ax.bar(x, drops, color="#d62728", label="frame_num silent drops")
         ax.set_xticks(x)
         ax.set_xticklabels(labels, rotation=30, ha="right", fontsize=8)

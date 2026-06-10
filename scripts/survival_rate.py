@@ -35,7 +35,6 @@ Outputs:
   neural_DAQ{1,2}/results/<stem>.rfi_survival.csv  — per-chunk per-RFI table
 """
 
-import glob
 import json
 import os
 import sys
@@ -47,7 +46,7 @@ import matplotlib.pyplot as plt
 sys.path.insert(0, os.path.dirname(__file__))
 import analyze_frame_num_drops as afd
 
-BASE = "/Users/mbrosch/Documents/9h_long_recording_December2025"
+BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DAQ1_DIR = f"{BASE}/neural_DAQ1"
 DAQ2_DIR = f"{BASE}/neural_DAQ2"
 OUT_DIR = f"{BASE}/output"
@@ -62,9 +61,13 @@ FPS = 20.0
 def _by_rfi(df):
     """Per-RFI table: n_buffers and majority frame_num (fn_mode)."""
     mask = afd.valid_mask(df["frame_num"])
-    return df[mask].groupby("reconstructed_frame_index").agg(
-        n_buffers=("frame_num", "size"),
-        fn_mode=("frame_num", lambda s: s.mode().iat[0] if len(s) else -1),
+    return (
+        df[mask]
+        .groupby("reconstructed_frame_index")
+        .agg(
+            n_buffers=("frame_num", "size"),
+            fn_mode=("frame_num", lambda s: s.mode().iat[0] if len(s) else -1),
+        )
     )
 
 
@@ -72,9 +75,11 @@ def _survival_from_by_rfi(by_rfi, fn_start, fn_end):
     """Count surviving MCU frame_nums at each buffer threshold."""
     out = {}
     for th in THRESHOLDS:
-        ok = by_rfi[(by_rfi["n_buffers"] >= th)
-                    & (by_rfi["fn_mode"] >= fn_start)
-                    & (by_rfi["fn_mode"] <= fn_end)]
+        ok = by_rfi[
+            (by_rfi["n_buffers"] >= th)
+            & (by_rfi["fn_mode"] >= fn_start)
+            & (by_rfi["fn_mode"] <= fn_end)
+        ]
         out[f"surviving_ge{th}"] = int(ok["fn_mode"].nunique())
     return out
 
@@ -110,11 +115,17 @@ def analyze_file(csv_path, daq, label):
         for th in THRESHOLDS:
             s = out[f"surviving_ge{th}"]
             out[f"lost_ge{th}"] = int(intended - s)
-            out[f"survival_rate_ge{th}_pct"] = round(100.0 * s / intended, 4) if intended else None
-            out[f"loss_rate_ge{th}_pct"] = round(100.0 * (intended - s) / intended, 4) if intended else None
+            out[f"survival_rate_ge{th}_pct"] = (
+                round(100.0 * s / intended, 4) if intended else None
+            )
+            out[f"loss_rate_ge{th}_pct"] = (
+                round(100.0 * (intended - s) / intended, 4) if intended else None
+            )
         return out
 
-    untrimmed = _stats(by_rfi, fn_end_full - fn_start_full + 1, fn_start_full, fn_end_full)
+    untrimmed = _stats(
+        by_rfi, fn_end_full - fn_start_full + 1, fn_start_full, fn_end_full
+    )
 
     # Trim: only DAQ1 chunks in the table. Drop last N RFIs, then recompute
     # fn_end from the kept RFIs' fn_modes.
@@ -125,12 +136,16 @@ def analyze_file(csv_path, daq, label):
             trimmed = untrimmed.copy()
         else:
             # Recompute fn_end from the kept RFIs' fn_modes (majority per RFI).
-            kept_valid = kept[(kept["fn_mode"] >= fn_start_full) & (kept["fn_mode"] <= fn_end_full)]
+            kept_valid = kept[
+                (kept["fn_mode"] >= fn_start_full) & (kept["fn_mode"] <= fn_end_full)
+            ]
             if len(kept_valid):
                 fn_end_trim = int(kept_valid["fn_mode"].max())
             else:
                 fn_end_trim = fn_end_full
-            trimmed = _stats(kept, fn_end_trim - fn_start_full + 1, fn_start_full, fn_end_trim)
+            trimmed = _stats(
+                kept, fn_end_trim - fn_start_full + 1, fn_start_full, fn_end_trim
+            )
         trimmed["trim_frames"] = trim_frames
     else:
         trimmed = untrimmed.copy()
@@ -142,12 +157,16 @@ def analyze_file(csv_path, daq, label):
     #                          ANY RFI with >= N buffers (MCU-level — the honest
     #                          "did this MCU frame make it across the link" flag)
     per_rfi = by_rfi.copy()
-    in_range = (per_rfi["fn_mode"] >= fn_start_full) & (per_rfi["fn_mode"] <= fn_end_full)
+    in_range = (per_rfi["fn_mode"] >= fn_start_full) & (
+        per_rfi["fn_mode"] <= fn_end_full
+    )
     for th in THRESHOLDS:
         per_rfi[f"surviving_ge{th}"] = (per_rfi["n_buffers"] >= th) & in_range
         # Set of MCU fn_modes with at least one >=th-buffer RFI.
         ok_fn_modes = set(per_rfi.loc[per_rfi[f"surviving_ge{th}"], "fn_mode"].unique())
-        per_rfi[f"mcu_surviving_ge{th}"] = per_rfi["fn_mode"].isin(ok_fn_modes) & in_range
+        per_rfi[f"mcu_surviving_ge{th}"] = (
+            per_rfi["fn_mode"].isin(ok_fn_modes) & in_range
+        )
     per_rfi["trimmed"] = False
     if trim_frames > 0 and len(per_rfi) > trim_frames:
         trimmed_rfi_idx = per_rfi.sort_index().index[-trim_frames:]
@@ -167,9 +186,14 @@ def write_per_chunk_rfi_csv(per_rfi, daq_dir, csv_path):
     stem = os.path.splitext(os.path.basename(csv_path))[0]
     out_path = os.path.join(results_dir, f"{stem}.rfi_survival.csv")
     cols = [
-        "n_buffers", "fn_mode",
-        "surviving_ge8", "surviving_ge7", "surviving_ge6",
-        "mcu_surviving_ge8", "mcu_surviving_ge7", "mcu_surviving_ge6",
+        "n_buffers",
+        "fn_mode",
+        "surviving_ge8",
+        "surviving_ge7",
+        "surviving_ge6",
+        "mcu_surviving_ge8",
+        "mcu_surviving_ge7",
+        "mcu_surviving_ge6",
         "trimmed",
     ]
     per_rfi[cols].to_csv(out_path, index=True, index_label="reconstructed_frame_index")
@@ -194,11 +218,13 @@ def collect():
                 continue
             r["untrimmed"]["label"] = label
             r["trimmed"]["label"] = label
-            per_daq[daq_key].append({
-                "label": label,
-                "untrimmed": r["untrimmed"],
-                "trimmed": r["trimmed"],
-            })
+            per_daq[daq_key].append(
+                {
+                    "label": label,
+                    "untrimmed": r["untrimmed"],
+                    "trimmed": r["trimmed"],
+                }
+            )
 
             write_per_chunk_rfi_csv(r["by_rfi"], daq_dir, csv)
 
@@ -260,13 +286,21 @@ def plot(per_daq, totals, out_path):
         intended = np.array([r["intended"] for r in rows])
         lost8 = intended - surv8
         ax.bar(x, surv8, color="#2ca02c", label="surviving (RFI ≥ 8 buffers)")
-        ax.bar(x, lost8, bottom=surv8, color="#d62728",
-               label="lost (no ≥8-buffer RFI for this MCU frame)")
+        ax.bar(
+            x,
+            lost8,
+            bottom=surv8,
+            color="#d62728",
+            label="lost (no ≥8-buffer RFI for this MCU frame)",
+        )
         for i, r in enumerate(rows):
             ax.text(
-                x[i], intended[i] + intended.max() * 0.01,
+                x[i],
+                intended[i] + intended.max() * 0.01,
                 f"{r['survival_rate_ge8_pct']}%",
-                ha="center", va="bottom", fontsize=8,
+                ha="center",
+                va="bottom",
+                fontsize=8,
             )
         t = totals[daq_key]["trimmed"]
         ax.set_title(
@@ -320,7 +354,7 @@ def run():
             f"→ survival {tr['survival_rate_ge8_pct']}%  "
             f"loss {tr['loss_rate_ge8_pct']}%"
         )
-    print(f"\nUntrimmed totals:")
+    print("\nUntrimmed totals:")
     for daq_key, t in totals.items():
         ut = t["untrimmed"]
         print(
